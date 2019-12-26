@@ -1,3 +1,4 @@
+import pandas as pd
 from torch.utils.data import Dataset
 import torch.nn.functional as F
 import concurrent.futures
@@ -6,8 +7,8 @@ from torchvision import transforms
 from collections.abc import Iterable
 from PIL import Image
 from PIL import ImageFile
+from .logger import logger
 import os
-from hakuna_madata.logger import logger
 from typing import Optional
 import functools
 
