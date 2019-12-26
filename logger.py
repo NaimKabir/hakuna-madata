@@ -22,5 +22,9 @@ formatter = Formatter(fmt=log_format, datefmt=date_format)
 # log handlers
 
 handler = StreamHandler(sys.stdout)
-handler.addFormatter(formatter)
+handler.setFormatter(formatter)
+
+# modifying logger object
+
+logger.addHandler(handler)
 
