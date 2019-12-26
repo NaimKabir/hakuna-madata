@@ -49,7 +49,7 @@ class SerengetiSequenceDataset(Dataset):
     def __init__(
         self,
         metadata_df: pd.DataFrame,
-        data_dir: str = '.',
+        data_dir: str = ".",
         labels_df: Optional[pd.DataFrame] = None,
         input_resize=RESIZE_TARGET,
         sequence_max: int = 50,
@@ -144,12 +144,13 @@ class SerengetiSequenceDataset(Dataset):
 
         # provision label tensor if available
 
-        labels = None
         if self.labels is not None:
             labels = self.labels.loc[seq_id].values
             labels = torch.from_numpy(labels)
 
-        return sequence, labels
+            return sequence, labels
+
+        return sequence
 
     def prepare_sequence(self, imgs):
         """Prepare series of images: create one tensor to represent the whole sequence."""
