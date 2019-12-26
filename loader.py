@@ -87,7 +87,7 @@ class SerengetiSequenceDataset(Dataset):
 
         # derived attrs
 
-        self.seq_ids = np.array(self.metadata.index.unique()_  # nparray
+        self.seq_ids = np.array(self.metadata.index.unique())  # nparray
 
         # torchvision preprocessing
 
