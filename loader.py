@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset
 import torch.nn.functional as F
-import concurrent.futures
 import torch
 from torchvision import transforms
 from collections.abc import Iterable
@@ -133,13 +132,12 @@ class SerengetiSequenceDataset(Dataset):
 
         imgs = (self.load_img(file_name) for file_name in img_files)
 
-        # processing images in parallel
+        # processing images
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self.preprocess, img) for img in imgs]
-            imgs = [fut.result() for fut in futures]
+        imgs = [self.preprocess(img) for img in imgs]
 
         # get sequence tensor
+
         sequence = self.prepare_sequence(imgs)
 
         # provision label tensor if available
