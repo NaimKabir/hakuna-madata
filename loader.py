@@ -100,7 +100,7 @@ class SerengetiSequenceDataset(Dataset):
 
         transform_operations = [resize, jitter, flip, tensorize, normalize]
 
-        self.preprocess = transform.Compose(transform_operations)
+        self.preprocess = transforms.Compose(transform_operations)
 
     def __len__(self):
         """The base unit is a sequence of images."""
