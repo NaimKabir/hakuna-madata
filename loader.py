@@ -12,7 +12,7 @@ import os
 from typing import Optional
 import functools
 
-ImageFile.LOAD_TRUNCATED_IMAGES=True # I have rare truncated data that I'm just... allowing. Don't judge me
+ImageFile.LOAD_TRUNCATED_IMAGES = True  # I have rare truncated data that I'm just... allowing. Don't judge me
 MAX_CACHE_SIZE = os.environ.get("MAX_CACHE_SIZE", 2048)
 RESIZE_TARGET = (384, 512)  # anything 3:4 ratio should keep original aspect (1536, 2048) and not distort too much
 MEANS_NORMALIZE = [0.485, 0.456, 0.406]
@@ -33,6 +33,7 @@ STDS_NORMALIZE = std = [0.229, 0.224, 0.225]
 
 # finetuning https://towardsdatascience.com/transfer-learning-picking-the-right-pre-trained-model-for-your-problem-bac69b488d16
 
+
 class SerengetiSequenceDataset(Dataset):
     """
         This Dataset models the basic classifiable units of the LILA Serengeti Snapshots
@@ -47,7 +48,7 @@ class SerengetiSequenceDataset(Dataset):
     def __init__(
         self,
         metadata_df: pd.DataFrame,
-        data_dir: str,
+        data_dir: str = '',
         labels_df: Optional[pd.DataFrame] = None,
         input_resize=RESIZE_TARGET,
         sequence_max: int = 50,
@@ -86,7 +87,7 @@ class SerengetiSequenceDataset(Dataset):
 
         # derived attrs
 
-        self.seq_ids = self.metadata.seq_id.unique()  # nparray
+        self.seq_ids = np.array(self.metadata.index.unique()_  # nparray
 
         # torchvision preprocessing
 
@@ -173,5 +174,5 @@ class SerengetiSequenceDataset(Dataset):
             
             Image loads are cached in memory for a time.
         """
-        img = Image.open(file_name)
+        img = Image.open(f"{self.data_dir}/{file_name}")
         return img
