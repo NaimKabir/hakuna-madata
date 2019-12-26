@@ -133,12 +133,13 @@ class SerengetiSequenceDataset(Dataset):
 
         imgs = (self.load_img(file_name) for file_name in img_files)
 
-        # processing images
+        # processing images in parallel
 
-        imgs = [self.preprocess(img) for img in imgs]
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(self.preprocess, img) for img in imgs]
+            imgs = [fut.result() for fut in futures]
 
         # get sequence tensor
-        
         sequence = self.prepare_sequence(imgs)
 
         # provision label tensor if available
