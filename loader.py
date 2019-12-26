@@ -49,7 +49,7 @@ class SerengetiSequenceDataset(Dataset):
     def __init__(
         self,
         metadata_df: pd.DataFrame,
-        data_dir: str = '',
+        data_dir: str = '.',
         labels_df: Optional[pd.DataFrame] = None,
         input_resize=RESIZE_TARGET,
         sequence_max: int = 50,
@@ -126,7 +126,7 @@ class SerengetiSequenceDataset(Dataset):
         img_files = self.metadata.loc[seq_id]
         if isinstance(img_files, pd.Series):
             img_files = [img_files.file_name]
-        elif isintance(img_files, pd.DataFrame):
+        elif isinstance(img_files, pd.DataFrame):
             img_files = img_files.file_name.values
 
         assert isinstance(img_files, Iterable), "Something went wrong with loading img_files, should be iterable."
