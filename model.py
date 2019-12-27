@@ -11,15 +11,18 @@ def TotalLogLoss(predicted, labels):
         for our multi-label problem.
     """
 
-    probabilities = predicted.clone()
-
     labels = labels.bool()  # for logical indexing
 
-    # take complement of classes that are not present
-    probabilities[~labels] = 1 - probabilities[~labels]
+    # take complement of classes that are not present,
+    # in a way that maintains the computation graph
+    
+    subtracted_from = ~labels.float()
+    sign_indicator = labels.float()*2-1 # [0,1] -> [-1, 1]
+    signed = sign_indicator*predicted
+    complemented = subtracted_from + signed
 
     # take negative log and sum
-    negative_log = -torch.log(probabilities)
+    negative_log = -torch.log(complemented)
 
     return negative_log.sum()
 
