@@ -88,3 +88,19 @@ class SequenceClassifier(nn.Module):
         predicted = self.predictor(selected)
 
         return predicted
+
+class ImageSequenceClassifier(nn.Module):
+
+    def __init__(self, embedding_dim, seq_len, in_dim, classes):
+        super(ImageSequenceClassifier, self).__init__()
+
+        network_operations = OrderedDict(
+            {
+                'embedder': ImageEmbedder(embedding_dim),
+                'classifier': SequenceClassifier(seq_len, in_dim, classes),
+            }
+        ) 
+        self.network = nn.Sequential(network_operations)
+    
+    def forward(self, X):
+        self.network(X)
