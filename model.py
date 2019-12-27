@@ -103,4 +103,4 @@ class ImageSequenceClassifier(nn.Module):
         self.network = nn.Sequential(network_operations)
     
     def forward(self, X):
-        self.network(X)
+        return self.network(X)
