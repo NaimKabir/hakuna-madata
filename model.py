@@ -15,8 +15,8 @@ def TotalLogLoss(predicted, labels):
 
     # take complement of classes that are not present,
     # in a way that maintains the computation graph
-    
-    subtracted_from = ~labels.float()
+
+    subtracted_from = (~labels).float()
     sign_indicator = labels.float()*2-1 # [0,1] -> [-1, 1]
     signed = sign_indicator*predicted
     complemented = subtracted_from + signed
