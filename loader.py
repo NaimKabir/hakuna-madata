@@ -23,7 +23,6 @@ STDS_NORMALIZE = std = [0.229, 0.224, 0.225]
 # augment data with random axis flips
 # use separate post-embedding models to do class-by-class classification (to avoid softmaxing)
 # no rescaling necessary--ResNets will adapt. Maybe training should involve random resizing however.
-
 # call eval() on a model after loading it in order to make it run in execution mode.
 
 # All pre-trained models expect input images normalized in the same way, i.e. mini-batches of
