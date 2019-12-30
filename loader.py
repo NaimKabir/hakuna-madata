@@ -7,7 +7,6 @@ from torchvision import transforms
 from collections.abc import Iterable
 from PIL import Image
 from PIL import ImageFile
-from .logger import logger
 import os
 from typing import Optional, List
 import functools
