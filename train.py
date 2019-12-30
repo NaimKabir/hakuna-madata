@@ -10,6 +10,7 @@ CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 22554  # discovered empirically from S1_6 TRAINING data count of Hartebeest (not val)
 CHECKPOINT_EVERY_N_BATCHES = 5000  # save model out every N batches
 BATCH_SIZE = 8
+CLASSES = 54
 
 
 labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
@@ -77,20 +78,34 @@ possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../
 trainset = loader.SerengetiSequenceDataset(
     metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs
 )
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=BATCH_SIZE)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=6)
 
 valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs)
 
 # loading model
 
-clf = model.ImageSequenceClassifier(256, 50, 54)
+clf = model.ImageSequenceClassifier(300, 50, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 def evaluate(model, valset, max_N):
     """ Evaluate on a subset of the test data """
-    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=BATCH_SIZE)
 
-    #TODO
+    model.eval() # go into eval mode so we don't accrue grads
+    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    loss = 0
+    for N, (batch_samples, batch_labels) in enumerate(valloader):
+
+        if CUDA_AVAILABLE:
+            batch_samples, batch_labels = batch_samples.cuda(), batch_labels.cuda()
+
+        for ix in range(batch_samples.shape[0]):
+            X, labels = batch_samples[ix], batch_labels[ix]
+            predictions = clf(X)
+            loss += model.TotalLogLoss(predictions, labels)
+
+        if N == max_N:
+            mean_loss = loss / float(max_N * BATCH_SIZE * CLASSES )
+            logger.logger.info("Eval Mean Loss: %6.2f" % mean_loss)
 
 if CUDA_AVAILABLE:
     logger.logger.info("Using CUDA for model load.")
@@ -101,6 +116,10 @@ EPOCHS = 1000
 for epoch in range(EPOCHS):
 
     logger.logger.info("EPOCH: %d" % epoch)
+
+    evaluate(clf, valset, 100)
+
+    clf.train() # ensure we're in training mode before we train
 
     for N, (batch_samples, batch_labels) in enumerate(trainloader):
 
@@ -115,7 +134,7 @@ for epoch in range(EPOCHS):
             predictions = clf(X)
             loss += model.TotalLogLoss(predictions, labels)
 
-        mean_loss = "%6.2f" % (loss / BATCH_SIZE)
+        mean_loss = "%6.2f" % (loss / (BATCH_SIZE * CLASSES))
         logger.logger.info("Mean loss: %s" % mean_loss)
 
         loss.backward()
