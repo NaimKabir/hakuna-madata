@@ -182,4 +182,3 @@ class SerengetiSequenceDataset(Dataset):
             except FileNotFoundError as e:
                 if len(possible_prefixes) == 0:
                     raise e
-
