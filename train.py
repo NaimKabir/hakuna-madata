@@ -4,11 +4,12 @@ import json
 from torch import optim
 import pandas as pd
 import torch
+import datetime as dt
 
 MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 22554  # discovered empirically from S1_6 TRAINING data count of Hartebeest (not val)
-CHECKPOINT_EVERY_N_BATCHES = 5000  # save model out every N batches
+CHECKPOINT_EVERY_N_BATCHES = 500  # save model out every N batches
 BATCH_SIZE = 8
 CLASSES = 54
 
@@ -78,7 +79,7 @@ possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../
 trainset = loader.SerengetiSequenceDataset(
     metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs
 )
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=6)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=BATCH_SIZE)
 
 valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs)
 
@@ -91,7 +92,7 @@ def evaluate(clf, valset, max_N):
     """ Evaluate on a subset of the test data """
 
     clf.eval() # go into eval mode so we don't accrue grads
-    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=BATCH_SIZE)
     loss = 0
     for N, (batch_samples, batch_labels) in enumerate(valloader):
 
@@ -142,4 +143,4 @@ for epoch in range(EPOCHS):
         optimizer.step()
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{str(N)}.pt")
+            torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
