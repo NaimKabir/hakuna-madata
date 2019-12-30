@@ -77,38 +77,49 @@ possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../
 trainset = loader.SerengetiSequenceDataset(
     metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs
 )
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=12)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=BATCH_SIZE)
 
 valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs)
-valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=12)
 
 # loading model
 
 clf = model.ImageSequenceClassifier(256, 50, 54)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
+def evaluate(model, valset, max_N):
+    """ Evaluate on a subset of the test data """
+    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=BATCH_SIZE)
+
+    #TODO
+
 if CUDA_AVAILABLE:
     logger.logger.info("Using CUDA for model load.")
     clf.cuda()
 
-for N, (batch_samples, batch_labels) in enumerate(trainloader):
+EPOCHS = 1000
 
-    if CUDA_AVAILABLE:
-        batch_samples, batch_labels = batch_samples.cuda(), batch_labels.cuda()
+for epoch in range(EPOCHS):
 
-    optimizer.zero_grad()
+    logger.logger.info("EPOCH: %d" % epoch)
 
-    loss = 0
-    for ix in range(batch_samples.shape[0]):
-        X, labels = batch_samples[ix], batch_labels[ix]
-        predictions = clf(X)
-        loss += model.TotalLogLoss(predictions, labels)
+    for N, (batch_samples, batch_labels) in enumerate(trainloader):
 
-    mean_loss = "%6.2f" % (loss / BATCH_SIZE)
-    logger.logger.info("Mean loss: %s" % mean_loss)
+        if CUDA_AVAILABLE:
+            batch_samples, batch_labels = batch_samples.cuda(), batch_labels.cuda()
 
-    loss.backward()
-    optimizer.step()
+        optimizer.zero_grad()
 
-    if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-        torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{str(N)}.pt")
+        loss = 0
+        for ix in range(batch_samples.shape[0]):
+            X, labels = batch_samples[ix], batch_labels[ix]
+            predictions = clf(X)
+            loss += model.TotalLogLoss(predictions, labels)
+
+        mean_loss = "%6.2f" % (loss / BATCH_SIZE)
+        logger.logger.info("Mean loss: %s" % mean_loss)
+
+        loss.backward()
+        optimizer.step()
+
+        if N % CHECKPOINT_EVERY_N_BATCHES == 0:
+            torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{str(N)}.pt")
