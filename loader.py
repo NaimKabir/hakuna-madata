@@ -75,7 +75,7 @@ class SerengetiSequenceDataset(Dataset):
         assert metadata_df.index.name == "seq_id", "metadata_df must be indexed by seq_id"
 
         self.metadata = metadata_df
-        self.data_dir = data_dir
+        self.data_dirs = data_dirs
         self.sequence_max = sequence_max
         self.input_resize = input_resize
 
