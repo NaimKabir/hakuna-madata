@@ -11,8 +11,8 @@ CHECKPOINT_EVERY_N_BATCHES = 5000  # save model out every N batches
 BATCH_SIZE = 8
 
 
-labels = pd.read_csv("train_labels.csv").set_index("seq_id")
-metadata = pd.read_csv("train_metadata.csv").set_index("seq_id")
+labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
+metadata = pd.read_csv("../train_metadata.csv").set_index("seq_id")
 
 # Indexing for the seasons I have available
 
@@ -101,5 +101,5 @@ for N, (batch_samples, batch_labels) in enumerate(trainloader):
     optimizer.step()
 
     if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-        torch.save(clf, f"resnet_18_loss_{mean_loss}_iter_{N}.pt")
+        torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{N}.pt")
 
