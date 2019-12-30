@@ -106,6 +106,7 @@ def evaluate(clf, valset, max_N):
         if N == max_N:
             mean_loss = loss / float(max_N * BATCH_SIZE * CLASSES )
             logger.logger.info("Eval Mean Loss: %6.2f" % mean_loss)
+            return
 
 if CUDA_AVAILABLE:
     logger.logger.info("Using CUDA for model load.")
@@ -117,7 +118,7 @@ for epoch in range(EPOCHS):
 
     logger.logger.info("EPOCH: %d" % epoch)
 
-    evaluate(clf, valset, 100)
+    evaluate(clf, valset, 50)
 
     clf.train() # ensure we're in training mode before we train
 
