@@ -14,6 +14,8 @@ BATCH_SIZE = 8
 labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
 metadata = pd.read_csv("../train_metadata.csv").set_index("seq_id")
 
+logger.logger.info("Loaded data.")
+
 # Indexing for the seasons I have available
 
 season_index = metadata.file_name.str.startswith("S1/")
@@ -50,6 +52,8 @@ train_df = metadata_1_6[train_idx]
 val_idx = build_df_index(metadata_1_6, val_folders)
 val_df = metadata_1_6[val_idx]
 
+logger.logger.info("Got training splits.")
+
 # balancing across labels in training--oversampling and undersampling as necessary
 # leaving test set unbalanced, as it likely will be in practice
 
@@ -60,6 +64,9 @@ balanced_train_df = (
     .apply(lambda df: df.sample(MAX_SAMPLES_PER_LABEL, replace=True))
     .droplevel(0)
 )
+
+logger.logger.info("Balanced data set.")
+
 # Getting train and val data loaders
 
 possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../disks/s5/", "../disks/s6/"]
@@ -101,5 +108,5 @@ for N, (batch_samples, batch_labels) in enumerate(trainloader):
     optimizer.step()
 
     if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-        torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{N}.pt")
+        torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{str(N)}.pt")
 
