@@ -70,6 +70,8 @@ logger.logger.info("Balanced data set.")
 
 # Getting train and val data loaders
 
+# I have a janky as hell solution to allow data loading from multiple disks
+# this isn't neat because Docker doesn't allow symlinking and my data is in many volumes
 possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../disks/s5/", "../disks/s6/"]
 
 trainset = loader.SerengetiSequenceDataset(
@@ -102,7 +104,7 @@ for N, (batch_samples, batch_labels) in enumerate(trainloader):
         predictions = clf(X)
         loss += model.TotalLogLoss(predictions, labels)
 
-    mean_loss = "%6.2f" % loss / BATCH_SIZE
+    mean_loss = "%6.2f" % (loss / BATCH_SIZE)
     logger.logger.info("Mean loss: %s" % mean_loss)
 
     loss.backward()
@@ -110,4 +112,3 @@ for N, (batch_samples, batch_labels) in enumerate(trainloader):
 
     if N % CHECKPOINT_EVERY_N_BATCHES == 0:
         torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{str(N)}.pt")
-
