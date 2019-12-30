@@ -47,7 +47,7 @@ class SerengetiSequenceDataset(Dataset):
     def __init__(
         self,
         metadata_df: pd.DataFrame,
-        data_dir: str = ".",
+        data_dirs: Iterable[str] = ["."],
         labels_df: Optional[pd.DataFrame] = None,
         input_resize=RESIZE_TARGET,
         sequence_max: int = 50,
@@ -173,5 +173,13 @@ class SerengetiSequenceDataset(Dataset):
             
             Image loads are cached in memory for a time.
         """
-        img = Image.open(f"{self.data_dir}/{file_name}")
-        return img
+        possible_prefixes = self.data_dirs[:]
+        while len(possible_prefixes) > 0:
+            try:
+                prefix = possible_prefixes.pop(0)
+                img = Image.open(f"{prefix}/{file_name}")
+                return img
+            except FileNotFoundError as e:
+                if len(possible_prefixes) == 0:
+                    raise e
+
