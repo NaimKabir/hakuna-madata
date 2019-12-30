@@ -87,10 +87,10 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 clf = model.ImageSequenceClassifier(300, 50, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
-def evaluate(model, valset, max_N):
+def evaluate(clf, valset, max_N):
     """ Evaluate on a subset of the test data """
 
-    model.eval() # go into eval mode so we don't accrue grads
+    clf.eval() # go into eval mode so we don't accrue grads
     valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
     loss = 0
     for N, (batch_samples, batch_labels) in enumerate(valloader):
