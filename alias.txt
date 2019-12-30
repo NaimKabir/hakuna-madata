@@ -1,0 +1,1 @@
+alias dr="docker run --runtime=nvidia -ti --entrypoint bin/bash -p 127.0.0.1:8888:8888 --ipc host --mount type=bind,src=/home/ec2-user/data,dst=/inference/data naimkabir/envs:hakuna-madata-gpu-1"
