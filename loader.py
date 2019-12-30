@@ -9,7 +9,7 @@ from PIL import Image
 from PIL import ImageFile
 from .logger import logger
 import os
-from typing import Optional
+from typing import Optional, List
 import functools
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # I have rare truncated data that I'm just... allowing. Don't judge me
@@ -47,7 +47,7 @@ class SerengetiSequenceDataset(Dataset):
     def __init__(
         self,
         metadata_df: pd.DataFrame,
-        data_dirs: Iterable[str] = ["."],
+        data_dirs: List[str] = ["."],
         labels_df: Optional[pd.DataFrame] = None,
         input_resize=RESIZE_TARGET,
         sequence_max: int = 50,
