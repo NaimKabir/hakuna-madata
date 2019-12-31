@@ -143,4 +143,4 @@ for epoch in range(EPOCHS):
         optimizer.step()
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet18_halfres_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/resnet18_endtoend_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
