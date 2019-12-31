@@ -10,7 +10,7 @@ MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 1500  # save model out every N batches
-BATCH_SIZE = 8
+BATCH_SIZE = 6
 CLASSES = 54
 
 
