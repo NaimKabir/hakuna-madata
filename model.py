@@ -36,14 +36,14 @@ class ImageEmbedder(nn.Module):
     def __init__(self, embedding_dim):
         super(ImageEmbedder, self).__init__()
 
-        pretrained = models.resnet50(pretrained=True)
+        pretrained = models.resnet18(pretrained=True)
         for param in pretrained.parameters():
             # freeze pretrained weights
             param.requires_grad = False
-        pretrained.fc = nn.Linear(2048, 2048, bias=True)  # fine-tuned final layer, w/ gradients on
+        pretrained.fc = nn.Linear(512, 512, bias=True)  # fine-tuned final layer, w/ gradients on
 
         embedder_operations = OrderedDict(
-            {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(2048, embedding_dim, bias=True)}
+            {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(512, embedding_dim, bias=True)}
         )
         self.network = nn.Sequential(embedder_operations)
 

@@ -8,9 +8,9 @@ import datetime as dt
 
 MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
-MAX_SAMPLES_PER_LABEL = 22554  # discovered empirically from S1_6 TRAINING data count of Hartebeest (not val)
+MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 1500  # save model out every N batches
-BATCH_SIZE = 8
+BATCH_SIZE = 16
 CLASSES = 54
 
 
@@ -143,4 +143,4 @@ for epoch in range(EPOCHS):
         optimizer.step()
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet50_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/resnet18_halfres_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
