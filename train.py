@@ -9,7 +9,7 @@ import datetime as dt
 MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 22554  # discovered empirically from S1_6 TRAINING data count of Hartebeest (not val)
-CHECKPOINT_EVERY_N_BATCHES = 500  # save model out every N batches
+CHECKPOINT_EVERY_N_BATCHES = 1500  # save model out every N batches
 BATCH_SIZE = 8
 CLASSES = 54
 
