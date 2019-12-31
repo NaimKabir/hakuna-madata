@@ -79,7 +79,7 @@ possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../
 trainset = loader.SerengetiSequenceDataset(
     metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs
 )
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=16)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
 
 valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs)
 
@@ -92,7 +92,7 @@ def evaluate(clf, valset, max_N):
     """ Evaluate on a subset of the test data """
 
     clf.eval() # go into eval mode so we don't accrue grads
-    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=16)
+    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
     loss = 0
     for N, (batch_samples, batch_labels) in enumerate(valloader):
 
