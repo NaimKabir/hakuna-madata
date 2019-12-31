@@ -137,10 +137,10 @@ for epoch in range(EPOCHS):
             loss += model.TotalLogLoss(predictions, labels)
 
         mean_loss = "%6.2f" % (loss / (BATCH_SIZE * CLASSES))
-        logger.logger.info("Mean loss: %s" % mean_loss)
+        logger.logger.info("Batch %d Mean loss: %s" % (N, mean_loss))
 
         loss.backward()
         optimizer.step()
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet_18_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/resnet50_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
