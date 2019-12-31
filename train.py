@@ -77,7 +77,7 @@ logger.logger.info("Balanced data set.")
 possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../disks/s5/", "../disks/s6/"]
 
 trainset = loader.SerengetiSequenceDataset(
-    metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs
+    metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs, training_mode=True
 )
 trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
 

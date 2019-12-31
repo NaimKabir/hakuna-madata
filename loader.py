@@ -13,7 +13,7 @@ import functools
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # I have rare truncated data that I'm just... allowing. Don't judge me
 MAX_CACHE_SIZE = int(os.environ.get("MAX_CACHE_SIZE", 2048))
-RESIZE_TARGET = (768, 1024)  # anything 3:4 ratio should keep original aspect (1536, 2048) and not distort too much
+RESIZE_TARGET = (384, 512)  # anything 3:4 ratio should keep original aspect (1536, 2048) and not distort too much
 MEANS_NORMALIZE = [0.485, 0.456, 0.406]
 STDS_NORMALIZE = std = [0.229, 0.224, 0.225]
 
@@ -48,6 +48,7 @@ class SerengetiSequenceDataset(Dataset):
         metadata_df: pd.DataFrame,
         data_dirs: List[str] = ["."],
         labels_df: Optional[pd.DataFrame] = None,
+        training_mode=False,
         input_resize=RESIZE_TARGET,
         sequence_max: int = 50,
     ):
@@ -76,6 +77,7 @@ class SerengetiSequenceDataset(Dataset):
         self.data_dirs = data_dirs
         self.sequence_max = sequence_max
         self.input_resize = input_resize
+        self.training_mode = training_mode
 
         if labels_df is not None:
             assert labels_df.index.name == "seq_id", "labels_df must be indexed by seq_id"
@@ -88,13 +90,23 @@ class SerengetiSequenceDataset(Dataset):
 
         # torchvision preprocessing
 
-        resize = transforms.Resize(self.input_resize)
-        jitter = transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.1)
-        flip = transforms.RandomHorizontalFlip(p=0.5)
-        tensorize = transforms.ToTensor()
-        normalize = transforms.Normalize(MEANS_NORMALIZE, STDS_NORMALIZE, inplace=True)
+        transform_operations = []
 
-        transform_operations = [resize, jitter, flip, tensorize, normalize]
+        resize = transforms.Resize(self.input_resize)
+        transform_operations.append(resize)
+
+        if self.training_mode:
+            jitter = transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.1)
+            transform_operations.append(jitter)
+
+            flip = transforms.RandomHorizontalFlip(p=0.5)
+            transform_operations.append(flip)
+
+            tensorize = transforms.ToTensor()
+            transform_operations.append(tensorize)
+
+            normalize = transforms.Normalize(MEANS_NORMALIZE, STDS_NORMALIZE, inplace=True)
+            transform_operations.append(normalize)
 
         self.preprocess = transforms.Compose(transform_operations)
 
