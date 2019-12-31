@@ -96,17 +96,19 @@ class SerengetiSequenceDataset(Dataset):
         transform_operations.append(resize)
 
         if self.training_mode:
+            # training data augmentation
+            
             jitter = transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.1)
             transform_operations.append(jitter)
 
             flip = transforms.RandomHorizontalFlip(p=0.5)
             transform_operations.append(flip)
 
-            tensorize = transforms.ToTensor()
-            transform_operations.append(tensorize)
+        tensorize = transforms.ToTensor()
+        transform_operations.append(tensorize)
 
-            normalize = transforms.Normalize(MEANS_NORMALIZE, STDS_NORMALIZE, inplace=True)
-            transform_operations.append(normalize)
+        normalize = transforms.Normalize(MEANS_NORMALIZE, STDS_NORMALIZE, inplace=True)
+        transform_operations.append(normalize)
 
         self.preprocess = transforms.Compose(transform_operations)
 
