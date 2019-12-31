@@ -10,7 +10,7 @@ MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 1500  # save model out every N batches
-BATCH_SIZE = 16
+BATCH_SIZE = 8
 CLASSES = 54
 
 
@@ -79,7 +79,7 @@ possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../
 trainset = loader.SerengetiSequenceDataset(
     metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs
 )
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=16)
 
 valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs)
 
@@ -92,7 +92,7 @@ def evaluate(clf, valset, max_N):
     """ Evaluate on a subset of the test data """
 
     clf.eval() # go into eval mode so we don't accrue grads
-    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=16)
     loss = 0
     for N, (batch_samples, batch_labels) in enumerate(valloader):
 
