@@ -85,7 +85,7 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 
 # loading model
 
-clf = model.ImageSequenceClassifier(300, 50, CLASSES)
+clf = model.ImageSequenceClassifier(512, 50, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 def evaluate(clf, valset, max_N):
