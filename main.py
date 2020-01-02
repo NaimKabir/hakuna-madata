@@ -7,6 +7,7 @@ from pathlib import Path
 import logger
 from loader import SerengetiSequenceDataset, RESIZE_TARGET
 
+CUDA_AVAILABLE = torch.cuda.is_available()
 ASSET_PATH = Path(__file__).parents[0] / "assets"
 MODEL_PATH = ASSET_PATH / "test_submission.pt"
 
@@ -42,8 +43,6 @@ def predict(clf, valset):
 
 def perform_inference():
     """This is the main function executed at runtime in the cloud environment. """
-
-    CUDA_AVAILABLE = torch.cuda.is_available()
 
     logger.logger.info("Loading model.")
     clf = torch.load(MODEL_PATH)
