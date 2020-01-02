@@ -21,7 +21,7 @@ def predict(clf, valset):
     valloader = DataLoader(valset, batch_size=32, shuffle=False)
 
     all_preds = []
-    for N, (batch_samples, batch_labels) in enumerate(valloader):
+    for batch_samples in valloader:
 
         batch_preds = []
 
