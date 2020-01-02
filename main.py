@@ -51,15 +51,12 @@ def perform_inference():
 
     logger.logger.info("Loading and processing metadata.")
 
-    # Our preprocessing selects the first image for each sequence
     test_metadata = pd.read_csv(DATA_PATH / "test_metadata.csv", index_col="seq_id")
 
     logger.logger.info("Starting inference.")
 
     # Preallocate prediction output
     submission_format = pd.read_csv(DATA_PATH / "submission_format.csv", index_col=0)
-    num_labels = submission_format.shape[1]
-    output = np.zeros((test_metadata.shape[0], num_labels))
 
     # Instantiate test data generator
     dataset = SerengetiSequenceDataset(
@@ -81,9 +78,9 @@ def perform_inference():
     # Check our predictions are in the same order as the submission format
     #assert np.all(test_metadata.seq_id.unique().tolist() == submission_format.index.to_list())
 
-    output[: preds.shape[0], :] = preds[: output.shape[0], :]
+    output[:preds.shape[0], :] = preds[:output.shape[0], :]
     my_submission = pd.DataFrame(
-        np.stack(output),
+        preds.numpy(),
         # Remember that we are predicting at the sequence, not image level
         index=test_metadata.seq_id,
         columns=submission_format.columns,
