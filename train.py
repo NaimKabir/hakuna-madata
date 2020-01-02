@@ -10,7 +10,7 @@ MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 500  # save model out every N batches
-BATCH_SIZE = 8
+BATCH_SIZE = 64
 CLASSES = 54
 
 
@@ -79,7 +79,7 @@ possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../
 trainset = loader.SerengetiSequenceDataset(
     metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs, training_mode=True
 )
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
 
 valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs)
 
