@@ -9,7 +9,7 @@ import datetime as dt
 MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
-CHECKPOINT_EVERY_N_BATCHES = 1500  # save model out every N batches
+CHECKPOINT_EVERY_N_BATCHES = 500  # save model out every N batches
 BATCH_SIZE = 6
 CLASSES = 54
 
@@ -138,11 +138,11 @@ for epoch in range(EPOCHS):
             predictions = clf(X)
             loss += model.TotalLogLoss(predictions, labels)
 
-        mean_loss = "%6.2f" % (loss / (BATCH_SIZE * CLASSES))
+        mean_loss = "%6.2f" % (loss / (BATCH_SIZE * CLASSES)).trim()
         logger.logger.info("Batch %d Mean loss: %s" % (N, mean_loss))
 
         loss.backward()
         optimizer.step()
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet18_endtoend_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/resnet18_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
