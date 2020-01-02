@@ -7,28 +7,35 @@ import torch
 import datetime as dt
 
 MODEL_DIR = "../models/"
+SEASON_1_6_PATH = "../train_metadata_1_6.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
 BATCH_SIZE = 32
 CLASSES = 54
 
+if not os.path.exists(SEASON_1_6_PATH):
+    labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
+    metadata = pd.read_csv("../train_metadata.csv").set_index("seq_id")
 
-labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
-metadata = pd.read_csv("../train_metadata.csv").set_index("seq_id")
+    logger.logger.info("Loaded data.")
 
-logger.logger.info("Loaded data.")
+    # Indexing for the seasons I have available
 
-# Indexing for the seasons I have available
+    season_index = metadata.file_name.str.startswith("S1/")
+    season_index = season_index | metadata.file_name.str.startswith("S2/")
+    season_index = season_index | metadata.file_name.str.startswith("S3/")
+    season_index = season_index | metadata.file_name.str.startswith("S4/")
+    season_index = season_index | metadata.file_name.str.startswith("S5/")
+    season_index = season_index | metadata.file_name.str.startswith("S6/")
 
-season_index = metadata.file_name.str.startswith("S1/")
-season_index = season_index | metadata.file_name.str.startswith("S2/")
-season_index = season_index | metadata.file_name.str.startswith("S3/")
-season_index = season_index | metadata.file_name.str.startswith("S4/")
-season_index = season_index | metadata.file_name.str.startswith("S5/")
-season_index = season_index | metadata.file_name.str.startswith("S6/")
+    metadata_1_6 = metadata[season_index]
 
-metadata_1_6 = metadata[season_index]
+    logger.logger.info("Sinking season 1-6 data.")
+
+    metadata_1_6.to_csv(SEASON_1_6_PATH, index=True)
+else:
+    metadata_1_6.read_csv(SEASON_1_6_PATH, index="seq_id")
 
 # Getting recommended train/val sets
 
