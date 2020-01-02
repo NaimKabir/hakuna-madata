@@ -123,8 +123,8 @@ def evaluate(clf, valset, max_N):
 
             for ix in range(batch_samples.shape[0]):
                 X, labels = batch_samples[ix], batch_labels[ix]
-                sigmoid = nn.Sigmoid()
-                predictions = sigmoid(clf(X))
+                predictions = clf(X) + 1
+                predictions = predictions / (predictions.sum() + 1e-9)
                 loss += model.TotalLogLoss(predictions, labels)
 
             if N == max_N:
