@@ -28,9 +28,9 @@ def TotalLogLoss(predicted, labels):
 
 def HingeLoss(decision_results, labels):
 
-    labels = labels.bool()  # for logical indexing
     sign_indicator = labels.float() * 2 - 1  # [0,1] -> [-1, 1]
-    hinge_loss = nn.HingeEmbeddingLoss(decision_results, sign_indicator)
+    loss_func = nn.HingeEmbeddingLoss()
+    hinge_loss = loss_func(decision_results, sign_indicator) 
 
     return hinge_loss
 
