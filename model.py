@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import torchvision.models as models
 import torch
 import torch.nn as nn
 
@@ -32,17 +33,17 @@ class ImageEmbedder(nn.Module):
         This... this'll do, I guess.
     """
 
-    def __init__(self, pretrained_model, penultimate_dim, embedding_dim):
+    def __init__(self, embedding_dim):
         super(ImageEmbedder, self).__init__()
 
-        pretrained = pretrained_model
+        pretrained = models.mnasnet1_0(pretrained=True)
         for param in pretrained.parameters():
             # freeze pretrained weights
             param.requires_grad = False
-        pretrained.fc = nn.Linear(penultimate_dim, penultimate_dim, bias=True)  # fine-tuned final layer, w/ gradients on
+        pretrained.classifier = nn.Linear(1280, 1280, bias=True)  # fine-tuned final layer, w/ gradients on
 
         embedder_operations = OrderedDict(
-            {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(penultimate_dim, embedding_dim, bias=True)}
+            {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(1280, embedding_dim, bias=True)}
         )
         self.network = nn.Sequential(embedder_operations)
 
@@ -64,7 +65,7 @@ class SequenceClassifier(nn.Module):
                 "linear1": nn.Linear(in_dim, in_dim, seq_len),
                 "relu": nn.ReLU(inplace=True),
                 "linear2": nn.Linear(in_dim, 1, seq_len),
-                "tanh": nn.Tanh(),
+                "tanh": nn.Tanh(), # to downgrade influence of particular vectors
             }
         )
         self.selector = nn.Sequential(selector_operations)
@@ -95,12 +96,12 @@ class SequenceClassifier(nn.Module):
 
 
 class ImageSequenceClassifier(nn.Module):
-    def __init__(self, pretrained_model, penultimate_dim, embedding_dim, seq_len, classes):
+    def __init__(self, embedding_dim, seq_len, classes):
         super(ImageSequenceClassifier, self).__init__()
 
         network_operations = OrderedDict(
             {
-                "embedder": ImageEmbedder(pretrained_model, penultimate_dim, embedding_dim),
+                "embedder": ImageEmbedder(embedding_dim),
                 "classifier": SequenceClassifier(seq_len, embedding_dim, classes),
             }
         )
