@@ -139,7 +139,7 @@ for epoch in range(EPOCHS):
             loss += model.TotalLogLoss(predictions, labels)
 
         mean_loss = "%6.2f" % (loss / (BATCH_SIZE * CLASSES))
-        mean_loss = mean_loss.trim()
+        mean_loss = mean_loss.strip()
         logger.logger.info("Batch %d Mean loss: %s" % (N, mean_loss))
 
         loss.backward()
