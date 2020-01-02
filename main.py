@@ -27,10 +27,10 @@ def predict(clf, valset):
         batch_preds = []
 
         if CUDA_AVAILABLE:
-            batch_samples, batch_labels = batch_samples.cuda(), batch_labels.cuda()
+            batch_samples = batch_samples.cuda()
 
         for ix in range(batch_samples.shape[0]):
-            X, labels = batch_samples[ix], batch_labels[ix]
+            X = batch_samples[ix]
             predictions = clf(X)
             batch_preds.append(predictions)
 
@@ -79,7 +79,7 @@ def perform_inference():
     logger.logger.info("Creating submission.")
 
     # Check our predictions are in the same order as the submission format
-    assert np.all(test_metadata.seq_id.unique().tolist() == submission_format.index.to_list())
+    #assert np.all(test_metadata.seq_id.unique().tolist() == submission_format.index.to_list())
 
     output[: preds.shape[0], :] = preds[: output.shape[0], :]
     my_submission = pd.DataFrame(
