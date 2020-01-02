@@ -1,5 +1,6 @@
 import loader, model, logger
 from torch.utils.data import DataLoader
+import torch.nn as nn
 import json
 import os
 from torch import optim
@@ -9,6 +10,8 @@ import datetime as dt
 
 MODEL_DIR = "../models/"
 SEASON_1_6_PATH = "../train_metadata_1_6.csv"
+TRAIN_DATAFRAME_PATH = "../train_metadata_1_6_train.csv"
+VAL_DATAFRAME_PATH = "../train_metadata_1_6_val.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
@@ -36,7 +39,7 @@ if not os.path.exists(SEASON_1_6_PATH):
 
     metadata_1_6.to_csv(SEASON_1_6_PATH, index=True)
 else:
-    metadata_1_6.read_csv(SEASON_1_6_PATH, index="seq_id")
+    metadata_1_6 = pd.read_csv(SEASON_1_6_PATH, index="seq_id")
 
 # Getting recommended train/val sets
 
@@ -49,19 +52,26 @@ val_folders = splits["splits"]["val"]
 
 # splitting into train and val dataframes
 
+if not os.path.exists(TRAIN_DATAFRAME_PATH):
+    def build_df_index(df, folders):
+        df_index = df.file_name == "DOESNT EXIST ANYWHERE"  # start with an all False index (this is janky, whatever idc)
+        for folder in folders:
+            df_index = df_index | df.file_name.str.contains(folder)
+        return df_index
 
-def build_df_index(df, folders):
-    df_index = df.file_name == "DOESNT EXIST ANYWHERE"  # start with an all False index (this is janky, whatever idc)
-    for folder in folders:
-        df_index = df_index | df.file_name.str.contains(folder)
-    return df_index
 
+    train_idx = build_df_index(metadata_1_6, train_folders)
+    train_df = metadata_1_6[train_idx]
 
-train_idx = build_df_index(metadata_1_6, train_folders)
-train_df = metadata_1_6[train_idx]
+    val_idx = build_df_index(metadata_1_6, val_folders)
+    val_df = metadata_1_6[val_idx]
 
-val_idx = build_df_index(metadata_1_6, val_folders)
-val_df = metadata_1_6[val_idx]
+    logger.logger.info("Sinking training splits.")
+    train_df.to_csv(TRAIN_DATAFRAME_PATH, index=True)
+    val_df.to_csv(VAL_DATAFRAME_PATH, index=True)
+else:
+    train_df = pd.read_csv(TRAIN_DATAFRAME_PATH, index="seq_id")
+    val_df = pd.read_csv(VAL_DATAFRAME_PATH, index="seq_id")
 
 logger.logger.info("Got training splits.")
 
