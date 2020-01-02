@@ -107,6 +107,7 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 import torchvision.models as models
 
 clf = model.ImageSequenceClassifier(512, 50, CLASSES)
+loss_fn = nn.MultiLabelMarginLoss()
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 
@@ -123,8 +124,7 @@ def evaluate(clf, valset, max_N):
 
             for ix in range(batch_samples.shape[0]):
                 X, labels = batch_samples[ix], batch_labels[ix]
-                predictions = clf(X) + 1
-                predictions = predictions / (predictions.sum() + 1e-9)
+                predictions = clf(X)
                 loss += model.TotalLogLoss(predictions, labels)
 
             if N == max_N:
@@ -159,11 +159,9 @@ for epoch in range(EPOCHS):
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
-            loss += model.HingeLoss(predictions, labels)
+            loss += loss_fn(predictions, labels)
 
             with torch.no_grad():
-                predictions = predictions + 1
-                predictions = predictions / (predictions.sum() + 1e-9)
                 report_loss += model.TotalLogLoss(predictions, labels)
 
         loss.backward()
