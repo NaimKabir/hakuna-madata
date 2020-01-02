@@ -79,7 +79,7 @@ def perform_inference():
     my_submission = pd.DataFrame(
         preds.cpu().numpy(),
         # Remember that we are predicting at the sequence, not image level
-        index=test_metadata.seq_id,
+        index=test_metadata.index,
         columns=submission_format.columns,
     )
 
