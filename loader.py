@@ -97,7 +97,7 @@ class SerengetiSequenceDataset(Dataset):
 
         if self.training_mode:
             # training data augmentation
-            
+
             jitter = transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.1)
             transform_operations.append(jitter)
 

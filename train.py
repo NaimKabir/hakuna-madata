@@ -88,10 +88,11 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 clf = model.ImageSequenceClassifier(512, 50, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
+
 def evaluate(clf, valset, max_N):
     """ Evaluate on a subset of the test data """
 
-    clf.eval() # go into eval mode so we don't accrue grads
+    clf.eval()  # go into eval mode so we don't accrue grads
     valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
     loss = 0
     for N, (batch_samples, batch_labels) in enumerate(valloader):
@@ -105,9 +106,10 @@ def evaluate(clf, valset, max_N):
             loss += model.TotalLogLoss(predictions, labels)
 
         if N == max_N:
-            mean_loss = loss / float(max_N * BATCH_SIZE * CLASSES )
+            mean_loss = loss / float(max_N * BATCH_SIZE * CLASSES)
             logger.logger.info("Eval Mean Loss: %6.2f" % mean_loss)
             return
+
 
 if CUDA_AVAILABLE:
     logger.logger.info("Using CUDA for model load.")
@@ -121,7 +123,7 @@ for epoch in range(EPOCHS):
 
     evaluate(clf, valset, 50)
 
-    clf.train() # ensure we're in training mode before we train
+    clf.train()  # ensure we're in training mode before we train
 
     for N, (batch_samples, batch_labels) in enumerate(trainloader):
 

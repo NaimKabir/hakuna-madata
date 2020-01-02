@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
+from pathlib import Path
 import logger
 from loader import SerengetiSequenceDataset, RESIZE_TARGET
 
@@ -9,10 +10,11 @@ MODEL_PATH = ASSET_PATH / "test_submission.pt"
 # The images will live in a folder called 'data' in the container
 DATA_PATH = Path(__file__).parents[0] / "data"
 
+
 def predict(clf, valset):
     """ Evaluate on a subset of the test data """
 
-    clf.eval() # go into eval mode so we don't accrue grads
+    clf.eval()  # go into eval mode so we don't accrue grads
     valloader = DataLoader(valset, batch_size=16, shuffle=False)
 
     all_preds = []
@@ -27,12 +29,13 @@ def predict(clf, valset):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
             batch_preds.append(predictions)
-        
+
         batch_preds_tensor = torch.cat(batch_preds, 0)
 
         all_preds.append(batch_preds_tensor)
 
     return torch.cat(all_preds, 0)
+
 
 def perform_inference():
     """This is the main function executed at runtime in the cloud environment. """
@@ -59,10 +62,10 @@ def perform_inference():
     # Instantiate test data generator
     dataset = SerengetiSequenceDataset(
         metadata_df=test_metadata,
-        data_dirs = [DATA_PATH],
+        data_dirs=[DATA_PATH],
         training_mode=False,
         input_resize=RESIZE_TARGET,
-        sequence_max= 50,
+        sequence_max=50,
     )
 
     # Perform (and time) inference
@@ -74,9 +77,7 @@ def perform_inference():
     logging.info("Creating submission.")
 
     # Check our predictions are in the same order as the submission format
-    assert np.all(
-        test_metadata.seq_id.unique().tolist() == submission_format.index.to_list()
-    )
+    assert np.all(test_metadata.seq_id.unique().tolist() == submission_format.index.to_list())
 
     output[: preds.shape[0], :] = preds[: output.shape[0], :]
     my_submission = pd.DataFrame(
