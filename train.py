@@ -121,7 +121,7 @@ for epoch in range(EPOCHS):
 
     logger.logger.info("EPOCH: %d" % epoch)
 
-    evaluate(clf, valset, 50)
+    #evaluate(clf, valset, 50)
 
     clf.train()  # ensure we're in training mode before we train
 
