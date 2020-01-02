@@ -26,6 +26,15 @@ def TotalLogLoss(predicted, labels):
 
     return negative_log.sum()
 
+def HingeLoss(decision_results, labels):
+
+    labels = labels.bool()  # for logical indexing
+    sign_indicator = labels.float() * 2 - 1  # [0,1] -> [-1, 1]
+    hinge_loss = nn.HingeEmbeddingLoss(decision_results, sign_indicator)
+
+    return hinge_loss
+
+
 
 class ImageEmbedder(nn.Module):
     """
@@ -75,7 +84,7 @@ class SequenceClassifier(nn.Module):
                 "linear1": nn.Linear(in_dim, in_dim),
                 "relu": nn.ReLU(inplace=True),
                 "linear2": nn.Linear(in_dim, classes),
-                "sigmoid": nn.Sigmoid(),  # not a softmax--we have a multitarget problem
+                "tanh": nn.Tanh(), 
             }
         )
         self.predictor = nn.Sequential(predictor_operations)
@@ -90,9 +99,9 @@ class SequenceClassifier(nn.Module):
 
         # use the weighted mean vector for final prediction step
 
-        predicted = self.predictor(selected)
+        decision = self.predictor(selected)
 
-        return predicted
+        return decision
 
 
 class ImageSequenceClassifier(nn.Module):

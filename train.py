@@ -93,24 +93,24 @@ optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 def evaluate(clf, valset, max_N):
     """ Evaluate on a subset of the test data """
+    with torch.no_grad():
+        clf.eval()  # go into eval mode so we don't accrue grads
+        valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
+        loss = 0
+        for N, (batch_samples, batch_labels) in enumerate(valloader):
 
-    clf.eval()  # go into eval mode so we don't accrue grads
-    valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
-    loss = 0
-    for N, (batch_samples, batch_labels) in enumerate(valloader):
+            if CUDA_AVAILABLE:
+                batch_samples, batch_labels = batch_samples.cuda(), batch_labels.cuda()
 
-        if CUDA_AVAILABLE:
-            batch_samples, batch_labels = batch_samples.cuda(), batch_labels.cuda()
+            for ix in range(batch_samples.shape[0]):
+                X, labels = batch_samples[ix], batch_labels[ix]
+                predictions = clf(X)
+                loss += model.TotalLogLoss(predictions, labels)
 
-        for ix in range(batch_samples.shape[0]):
-            X, labels = batch_samples[ix], batch_labels[ix]
-            predictions = clf(X)
-            loss += model.TotalLogLoss(predictions, labels)
-
-        if N == max_N:
-            mean_loss = loss / float(max_N * BATCH_SIZE * CLASSES)
-            logger.logger.info("Eval Mean Loss: %6.2f" % mean_loss)
-            return
+            if N == max_N:
+                mean_loss = loss / float(max_N * BATCH_SIZE * CLASSES)
+                logger.logger.info("Eval Mean Loss: %6.2f" % mean_loss)
+                return
 
 
 if CUDA_AVAILABLE:
@@ -135,17 +135,21 @@ for epoch in range(EPOCHS):
         optimizer.zero_grad()
 
         loss = 0
+        report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
-            loss += model.TotalLogLoss(predictions, labels)
+            loss += model.HingeLoss(predictions, labels)
 
-        mean_loss = "%6.2f" % (loss / (BATCH_SIZE * CLASSES))
-        mean_loss = mean_loss.strip()
-        logger.logger.info("Batch %d Mean loss: %s" % (N, mean_loss))
+            with torch.no_grad():
+                report_loss += model.TotalLogLoss(predictions, labels)
 
         loss.backward()
         optimizer.step()
+
+        mean_loss = "%6.2f" % (report_loss / (BATCH_SIZE * CLASSES))
+        mean_loss = mean_loss.strip()
+        logger.logger.info("Batch %d Mean loss: %s" % (N, mean_loss))
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
             torch.save(clf, f"{MODEL_DIR}/mnasnet_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
