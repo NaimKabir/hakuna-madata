@@ -39,7 +39,7 @@ if not os.path.exists(SEASON_1_6_PATH):
 
     metadata_1_6.to_csv(SEASON_1_6_PATH, index=True)
 else:
-    metadata_1_6 = pd.read_csv(SEASON_1_6_PATH, index="seq_id")
+    metadata_1_6 = pd.read_csv(SEASON_1_6_PATH, index_col="seq_id")
 
 # Getting recommended train/val sets
 
@@ -70,8 +70,8 @@ if not os.path.exists(TRAIN_DATAFRAME_PATH):
     train_df.to_csv(TRAIN_DATAFRAME_PATH, index=True)
     val_df.to_csv(VAL_DATAFRAME_PATH, index=True)
 else:
-    train_df = pd.read_csv(TRAIN_DATAFRAME_PATH, index="seq_id")
-    val_df = pd.read_csv(VAL_DATAFRAME_PATH, index="seq_id")
+    train_df = pd.read_csv(TRAIN_DATAFRAME_PATH, index_col="seq_id")
+    val_df = pd.read_csv(VAL_DATAFRAME_PATH, index_col="seq_id")
 
 logger.logger.info("Got training splits.")
 
