@@ -1,5 +1,4 @@
 from collections import OrderedDict
-import torchvision.models as models
 import torch
 import torch.nn as nn
 
@@ -33,14 +32,14 @@ class ImageEmbedder(nn.Module):
         This... this'll do, I guess.
     """
 
-    def __init__(self, embedding_dim):
+    def __init__(self, pretrained_model, penultimate_dim, embedding_dim):
         super(ImageEmbedder, self).__init__()
 
-        pretrained = models.resnet18(pretrained=True)
+        pretrained = pretrained_model
         for param in pretrained.parameters():
             # freeze pretrained weights
             param.requires_grad = False
-        pretrained.fc = nn.Linear(512, 512, bias=True)  # fine-tuned final layer, w/ gradients on
+        pretrained.fc = nn.Linear(penultimate_dim, penultimate_dim, bias=True)  # fine-tuned final layer, w/ gradients on
 
         embedder_operations = OrderedDict(
             {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(512, embedding_dim, bias=True)}
@@ -96,12 +95,12 @@ class SequenceClassifier(nn.Module):
 
 
 class ImageSequenceClassifier(nn.Module):
-    def __init__(self, embedding_dim, seq_len, classes):
+    def __init__(self, pretrained_model, penultimate_dim, embedding_dim, seq_len, classes):
         super(ImageSequenceClassifier, self).__init__()
 
         network_operations = OrderedDict(
             {
-                "embedder": ImageEmbedder(embedding_dim),
+                "embedder": ImageEmbedder(pretrained_model, penultimate_dim, embedding_dim),
                 "classifier": SequenceClassifier(seq_len, embedding_dim, classes),
             }
         )

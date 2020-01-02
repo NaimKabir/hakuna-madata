@@ -16,7 +16,8 @@ DATA_PATH = Path(__file__).parents[0] / "data"
 
 
 def predict(clf, valset):
-    """ Evaluate on a subset of the test data """
+    """ Evaluate on a subset of the test data. 
+        Binarize: anything below 5% is dropped to 0 and everything else is jumped to 1. """
 
     clf # go into eval mode so we don't accrue grads
     valloader = DataLoader(valset, batch_size=32, shuffle=False)
@@ -32,6 +33,8 @@ def predict(clf, valset):
         for ix in range(batch_samples.shape[0]):
             X = batch_samples[ix]
             predictions = clf(X).unsqueeze(0)
+            predictions[predictions<0.1] = 0
+            predictions[predictions>=0.1] = 1
             batch_preds.append(predictions)
 
         batch_preds_tensor = torch.cat(batch_preds, 0)

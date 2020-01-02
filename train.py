@@ -4,12 +4,13 @@ import json
 from torch import optim
 import pandas as pd
 import torch
+import torchvision
 import datetime as dt
 
 MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
-CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
+CHECKPOINT_EVERY_N_BATCHES = 500  # save model out every N batches
 BATCH_SIZE = 32
 CLASSES = 54
 
@@ -85,7 +86,8 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 
 # loading model
 
-clf = model.ImageSequenceClassifier(512, 50, CLASSES)
+pretrained, penultimate_dim = torchvision.models.mnasnet1_0(pretrained=True), 1280
+clf = model.ImageSequenceClassifier(pretrained, penultimate_dim, 512, 50, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 
@@ -146,4 +148,4 @@ for epoch in range(EPOCHS):
         optimizer.step()
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet18_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/mnasnet_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
