@@ -18,7 +18,7 @@ DATA_PATH = Path(__file__).parents[0] / "data"
 def predict(clf, valset):
     """ Evaluate on a subset of the test data """
 
-    clf.eval()  # go into eval mode so we don't accrue grads
+    clf # go into eval mode so we don't accrue grads
     valloader = DataLoader(valset, batch_size=32, shuffle=False)
 
     all_preds = []
@@ -45,7 +45,7 @@ def perform_inference():
     """This is the main function executed at runtime in the cloud environment. """
 
     logger.logger.info("Loading model.")
-    clf = torch.load(MODEL_PATH)
+    clf = torch.load(MODEL_PATH).eval()
     if CUDA_AVAILABLE:
         clf.cuda()
 
@@ -69,7 +69,8 @@ def perform_inference():
 
     # Perform (and time) inference
     inference_start = datetime.now()
-    preds = predict(clf, dataset)
+    with torch.no_grad():
+        preds = predict(clf, dataset)
     inference_stop = datetime.now()
     logger.logger.info(f"Inference complete. Took {inference_stop - inference_start}.")
 
