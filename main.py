@@ -42,12 +42,12 @@ def perform_inference():
 
     CUDA_AVAILABLE = torch.cuda.is_available()
 
-    logging.info("Loading model.")
+    logger.logger.info("Loading model.")
     clf = torch.load(MODEL_PATH)
     if CUDA_AVAILABLE:
         clf.cuda()
 
-    logging.info("Loading and processing metadata.")
+    logger.logger.info("Loading and processing metadata.")
 
     # Our preprocessing selects the first image for each sequence
     test_metadata = pd.read_csv(DATA_PATH / "test_metadata.csv", index_col="seq_id")
@@ -72,9 +72,9 @@ def perform_inference():
     inference_start = datetime.now()
     preds = predict(clf, dataset)
     inference_stop = datetime.now()
-    logging.info(f"Inference complete. Took {inference_stop - inference_start}.")
+    logger.logger.info(f"Inference complete. Took {inference_stop - inference_start}.")
 
-    logging.info("Creating submission.")
+    logger.logger.info("Creating submission.")
 
     # Check our predictions are in the same order as the submission format
     assert np.all(test_metadata.seq_id.unique().tolist() == submission_format.index.to_list())
@@ -92,7 +92,7 @@ def perform_inference():
 
     # Save out submission to root of directory
     my_submission.to_csv("submission.csv", index=True)
-    logging.info(f"Submission saved.")
+    logger.logger.info(f"Submission saved.")
 
 
 if __name__ == "__main__":
