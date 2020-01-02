@@ -104,7 +104,8 @@ def evaluate(clf, valset, max_N):
 
             for ix in range(batch_samples.shape[0]):
                 X, labels = batch_samples[ix], batch_labels[ix]
-                predictions = clf(X)
+                sigmoid = nn.Sigmoid()
+                predictions = sigmoid(clf(X))
                 loss += model.TotalLogLoss(predictions, labels)
 
             if N == max_N:
@@ -142,7 +143,8 @@ for epoch in range(EPOCHS):
             loss += model.HingeLoss(predictions, labels)
 
             with torch.no_grad():
-                report_loss += model.TotalLogLoss(predictions, labels)
+                sigmoid = nn.Sigmoid()
+                report_loss += model.TotalLogLoss(sigmoid(predictions), labels)
 
         loss.backward()
         optimizer.step()
