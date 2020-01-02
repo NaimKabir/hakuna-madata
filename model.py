@@ -42,7 +42,7 @@ class ImageEmbedder(nn.Module):
         pretrained.fc = nn.Linear(penultimate_dim, penultimate_dim, bias=True)  # fine-tuned final layer, w/ gradients on
 
         embedder_operations = OrderedDict(
-            {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(512, embedding_dim, bias=True)}
+            {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(penultimate_dim, embedding_dim, bias=True)}
         )
         self.network = nn.Sequential(embedder_operations)
 
