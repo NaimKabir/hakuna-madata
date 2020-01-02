@@ -31,7 +31,7 @@ def predict(clf, valset):
 
         for ix in range(batch_samples.shape[0]):
             X = batch_samples[ix]
-            predictions = clf(X)
+            predictions = clf(X).unsqueeze(0)
             batch_preds.append(predictions)
 
         batch_preds_tensor = torch.cat(batch_preds, 0)
