@@ -33,8 +33,6 @@ def predict(clf, valset):
         for ix in range(batch_samples.shape[0]):
             X = batch_samples[ix]
             predictions = clf(X).unsqueeze(0)
-            predictions[predictions<0.1] = 0
-            predictions[predictions>=0.1] = 1
             batch_preds.append(predictions)
 
         batch_preds_tensor = torch.cat(batch_preds, 0)
@@ -82,7 +80,7 @@ def perform_inference():
     my_submission = pd.DataFrame(
         preds.cpu().numpy(),
         # Remember that we are predicting at the sequence, not image level
-        index=test_metadata.index,
+        index=test_metadata.index.unique(),
         columns=submission_format.columns,
     )
 
