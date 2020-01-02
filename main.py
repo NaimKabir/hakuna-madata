@@ -76,7 +76,7 @@ def perform_inference():
     logger.logger.info("Creating submission.")
 
     my_submission = pd.DataFrame(
-        preds.numpy(),
+        preds.cpu().numpy(),
         # Remember that we are predicting at the sequence, not image level
         index=test_metadata.seq_id,
         columns=submission_format.columns,
