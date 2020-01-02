@@ -18,7 +18,7 @@ def predict(clf, valset):
     """ Evaluate on a subset of the test data """
 
     clf.eval()  # go into eval mode so we don't accrue grads
-    valloader = DataLoader(valset, batch_size=16, shuffle=False)
+    valloader = DataLoader(valset, batch_size=32, shuffle=False)
 
     all_preds = []
     for N, (batch_samples, batch_labels) in enumerate(valloader):

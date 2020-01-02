@@ -9,8 +9,8 @@ import datetime as dt
 MODEL_DIR = "../models/"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
-CHECKPOINT_EVERY_N_BATCHES = 500  # save model out every N batches
-BATCH_SIZE = 64
+CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
+BATCH_SIZE = 32
 CLASSES = 54
 
 

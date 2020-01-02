@@ -65,7 +65,7 @@ class SequenceClassifier(nn.Module):
                 "linear1": nn.Linear(in_dim, in_dim, seq_len),
                 "relu": nn.ReLU(inplace=True),
                 "linear2": nn.Linear(in_dim, 1, seq_len),
-                "sigmoid": nn.Sigmoid(),
+                "tanh": nn.Tanh(),
             }
         )
         self.selector = nn.Sequential(selector_operations)
