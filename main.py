@@ -75,10 +75,6 @@ def perform_inference():
 
     logger.logger.info("Creating submission.")
 
-    # Check our predictions are in the same order as the submission format
-    #assert np.all(test_metadata.seq_id.unique().tolist() == submission_format.index.to_list())
-
-    output[:preds.shape[0], :] = preds[:output.shape[0], :]
     my_submission = pd.DataFrame(
         preds.numpy(),
         # Remember that we are predicting at the sequence, not image level
