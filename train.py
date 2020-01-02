@@ -111,7 +111,7 @@ def evaluate(clf, valset, max_N):
 
 if CUDA_AVAILABLE:
     logger.logger.info("Using CUDA for model load.")
-    clf.cuda()
+    clf = clf.cuda()
 
 EPOCHS = 1000
 
