@@ -18,11 +18,10 @@ CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
 BATCH_SIZE = 32
 CLASSES = 54
 
-if not os.path.exists(SEASON_1_6_PATH):
-    labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
-    metadata = pd.read_csv("../train_metadata.csv").set_index("seq_id")
+labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
 
-    logger.logger.info("Loaded data.")
+if not os.path.exists(SEASON_1_6_PATH):
+    metadata = pd.read_csv("../train_metadata.csv").set_index("seq_id")
 
     # Indexing for the seasons I have available
 
@@ -41,24 +40,26 @@ if not os.path.exists(SEASON_1_6_PATH):
 else:
     metadata_1_6 = pd.read_csv(SEASON_1_6_PATH, index_col="seq_id")
 
-# Getting recommended train/val sets
-
-jsonfilename = "recommended_splits.json"
-with open(jsonfilename, "r") as jsonfile:
-    splits = json.load(jsonfile)
-
-train_folders = splits["splits"]["train"]
-val_folders = splits["splits"]["val"]
+logger.logger.info("Loaded data.")
 
 # splitting into train and val dataframes
 
 if not os.path.exists(TRAIN_DATAFRAME_PATH):
+
+    # Getting recommended train/val sets
+
+    jsonfilename = "recommended_splits.json"
+    with open(jsonfilename, "r") as jsonfile:
+        splits = json.load(jsonfile)
+
+    train_folders = splits["splits"]["train"]
+    val_folders = splits["splits"]["val"]
+
     def build_df_index(df, folders):
         df_index = df.file_name == "DOESNT EXIST ANYWHERE"  # start with an all False index (this is janky, whatever idc)
         for folder in folders:
             df_index = df_index | df.file_name.str.contains(folder)
         return df_index
-
 
     train_idx = build_df_index(metadata_1_6, train_folders)
     train_df = metadata_1_6[train_idx]
