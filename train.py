@@ -154,4 +154,4 @@ for epoch in range(EPOCHS):
         logger.logger.info("Batch %d Mean loss: %s" % (N, mean_loss))
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/mnasnet_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/mnasnet_hingeloss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
