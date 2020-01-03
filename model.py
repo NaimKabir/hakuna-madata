@@ -2,6 +2,7 @@ from collections import OrderedDict
 import torchvision.models as models
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 def TotalLogLoss(predicted, labels):
@@ -26,11 +27,15 @@ def TotalLogLoss(predicted, labels):
 
     return negative_log.sum()
 
-def HingeLoss(decision_results, labels):
+def HingeLoss(predicted, labels):
 
-    sign_indicator = labels.float() * 2 - 1  # [0,1] -> [-1, 1]
-    loss_func = nn.HingeEmbeddingLoss()
-    hinge_loss = loss_func(decision_results, sign_indicator) 
+    # multilabel margin loss is straight-up stupid in its implementation
+    # it requires labels to be class indices, padded with negative int values
+    idxes = labels.nonzero().squeeze() # getting indices
+    padding = len(predicted) - len(idxes)
+    idxes_padded = F.pad(input=idxes, pad=(0, padding), mode="constant", value=-1)
+    loss_func = nn.MultiLabelMarginLoss()
+    hinge_loss = loss_func(predicted, idxes_padded) 
 
     return hinge_loss
 
