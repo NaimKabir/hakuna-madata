@@ -164,7 +164,7 @@ for epoch in range(EPOCHS):
         report_loss.backward()
         optimizer.step()
 
-        mean_loss = "%6.2f" % (report_loss / (BATCH_SIZE * CLASSES))
+        mean_loss = "%6.2f" % (report_loss) #/ (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
         logger.logger.info("Batch %d Mean total logloss: %s & Hinge loss: %s" % (N, mean_loss, mean_loss))
 
