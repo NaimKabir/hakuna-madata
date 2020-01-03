@@ -47,7 +47,7 @@ def HingeLoss(predicted, labels):
         row_idx = nonzeros[:, 0] == row
         nonzero_idxes = nonzeros[row_idx, 1]
         idxes[row, :len(nonzero_idxes)] = nonzero_idxes
-    loss_func = nn.MultiLabelMarginLoss()
+    loss_func = nn.MultiLabelMarginLoss(reduction='sum')
     hinge_loss = loss_func(predicted, idxes.long()) 
 
     return hinge_loss
