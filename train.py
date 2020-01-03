@@ -161,7 +161,9 @@ for epoch in range(EPOCHS):
             loss += model.HingeLoss(predictions, labels)
 
             with torch.no_grad():
-                report_loss += model.TotalLogLoss(predictions, labels)
+                preds = predictions + 1
+                preds = preds / preds.sum(1, keep_dim=True)
+                report_loss += model.TotalLogLoss(preds, labels)
 
         loss.backward()
         optimizer.step()
