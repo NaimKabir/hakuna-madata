@@ -133,13 +133,11 @@ class ImageSequenceClassifier(nn.Module):
         )
         self.network = nn.Sequential(network_operations)
 
+        self.proba = nn.Sigmoid()
+
     def forward(self, X):
         return self.network(X)
 
     def predict_proba(self, X):
-        decision = self.forward(X)
-        decision = decision - decision.min()
-        decision = decision / decision.sum()
-
-        return decision
+        return self.proba(self.forward(X))
         
