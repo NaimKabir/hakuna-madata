@@ -139,5 +139,9 @@ class ImageSequenceClassifier(nn.Module):
         return self.network(X)
 
     def predict_proba(self, X):
-        return self.proba(self.forward(X))
+        decision = self.forward(X)
+        decision = decision - decision.min()
+        decision = decision / (decision.sum() + 1e-9)
+
+        return decision
         

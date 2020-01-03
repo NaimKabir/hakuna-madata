@@ -154,18 +154,19 @@ for epoch in range(EPOCHS):
         optimizer.zero_grad()
 
         loss = 0
-        proba_loss = 0
+        report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
             loss += model.HingeLoss(predictions, labels)
-            proba_loss += model.TotalLogLoss(clf.predict_proba(X), labels)
+
+            with torch.no_grad():
+                report_loss += model.TotalLogLoss(clf.predict_proba(X), labels)
 
         loss.backward()
-        proba_loss.backward()
         optimizer.step()
 
-        mean_loss = "%6.2f" % (proba_loss / (BATCH_SIZE * CLASSES))
+        mean_loss = "%6.2f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
         logger.logger.info("Batch %d Mean total logloss: %s & Hinge loss: %6.2f" % (N, mean_loss, loss))
 
