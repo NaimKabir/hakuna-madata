@@ -159,7 +159,7 @@ for epoch in range(EPOCHS):
             X, labels = batch_samples[ix], batch_labels[ix]
             #predictions = clf(X)
             # loss += model.HingeLoss(predictions, labels)
-            report_loss += model.TotalLogLoss(clf(X), labels)
+            report_loss += model.HingeLoss(clf(X), labels)
 
         report_loss.backward()
         optimizer.step()
@@ -169,4 +169,4 @@ for epoch in range(EPOCHS):
         logger.logger.info("Batch %d Mean total logloss: %s & Hinge loss: %s" % (N, mean_loss, mean_loss))
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/mnasnet_hingeloss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/resnet_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
