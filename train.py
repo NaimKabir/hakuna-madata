@@ -157,7 +157,7 @@ for epoch in range(EPOCHS):
         report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
-            # predictions = clf(X)
+            predictions = clf(X)
             # loss += model.HingeLoss(predictions, labels)
             report_loss += model.TotalLogLoss(predictions, labels)
 
