@@ -119,6 +119,13 @@ class SequenceClassifier(nn.Module):
         decision = self.predictor(selected)
 
         return decision
+    
+    def predict_proba(self, X):
+        decision = self.forward(X)
+        decision = decision - decision.min()
+        decision = decision / decision.sum()
+
+        return decision
 
 
 class ImageSequenceClassifier(nn.Module):
