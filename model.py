@@ -3,7 +3,9 @@ import torchvision.models as models
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
+CUDA_AVAILABLE = torch.cuda.is_available()
 
 def TotalLogLoss(predicted, labels):
     """
@@ -31,14 +33,24 @@ def HingeLoss(predicted, labels):
 
     # multilabel margin loss is straight-up stupid in its implementation
     # it requires labels to be class indices, padded with negative int values
-    idxes = labels.nonzero().squeeze() # getting indices
-    padding = len(predicted) - len(idxes)
-    idxes_padded = F.pad(input=idxes, pad=(0, padding), mode="constant", value=-1)
+
+    if len(labels.shape) == 1:
+        labels = labels.unsqueeze(0)
+        predicted = predicted.unsqueeze(0)
+
+    idxes = torch.ones(labels.shape) * -1 # preallocate space for labels
+    if CUDA_AVAILABLE:
+        idxes = idxes.cuda()
+
+    nonzeros = labels.nonzero()
+    for row in range(labels.shape[0]):
+        row_idx = nonzeros[:, 0] == row
+        nonzero_idxes = nonzeros[row_idx, 1]
+        idxes[row, :len(nonzero_idxes)] = nonzero_idxes
     loss_func = nn.MultiLabelMarginLoss()
-    hinge_loss = loss_func(predicted, idxes_padded) 
+    hinge_loss = loss_func(predicted, idxes.long()) 
 
     return hinge_loss
-
 
 
 class ImageEmbedder(nn.Module):
