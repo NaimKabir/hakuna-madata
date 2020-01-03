@@ -162,7 +162,7 @@ for epoch in range(EPOCHS):
 
             with torch.no_grad():
                 preds = predictions + 1
-                preds = preds / preds.sum(1, keep_dim=True)
+                preds = preds / preds.sum(1, keepdim=True)
                 report_loss += model.TotalLogLoss(preds, labels)
 
         loss.backward()
