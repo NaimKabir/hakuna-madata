@@ -159,7 +159,7 @@ for epoch in range(EPOCHS):
             X, labels = batch_samples[ix], batch_labels[ix]
             #predictions = clf(X)
             # loss += model.HingeLoss(predictions, labels)
-            report_loss += model.TotalLogLoss(clf.predict_proba(X), labels)
+            report_loss += model.TotalLogLoss(clf(X), labels)
 
         report_loss.backward()
         optimizer.step()
