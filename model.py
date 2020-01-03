@@ -101,7 +101,7 @@ class SequenceClassifier(nn.Module):
                 "linear1": nn.Linear(in_dim, in_dim),
                 "relu": nn.ReLU(inplace=True),
                 "linear2": nn.Linear(in_dim, classes),
-                "tanh": nn.Tanhshrink(),   # unbounded for margin maximization
+                "sigmoid": nn.Sigmoid(),   # unbounded for margin maximization
             }
         )
         self.predictor = nn.Sequential(predictor_operations)
@@ -133,11 +133,6 @@ class ImageSequenceClassifier(nn.Module):
         )
         self.network = nn.Sequential(network_operations)
 
-        self.proba = nn.Sigmoid()
-
     def forward(self, X):
         return self.network(X)
-
-    def predict_proba(self, X):
-        return self.proba(self.forward(X))
         
