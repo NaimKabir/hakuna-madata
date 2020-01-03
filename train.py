@@ -168,7 +168,7 @@ for epoch in range(EPOCHS):
 
         mean_loss = "%6.2f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
-        logger.logger.info("Batch %d Mean loss: %s" % (N, mean_loss))
+        logger.logger.info("Batch %d Mean total logloss: %s & Hinge loss: %6.2f" % (N, mean_loss, loss))
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
             torch.save(clf, f"{MODEL_DIR}/mnasnet_hingeloss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
