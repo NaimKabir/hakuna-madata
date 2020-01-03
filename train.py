@@ -161,8 +161,8 @@ for epoch in range(EPOCHS):
             loss += model.HingeLoss(predictions, labels)
             report_loss += model.TotalLogLoss(predictions, labels)
 
-        loss.backward()
-        report_loss.backward()
+        composed_loss = loss + report_loss
+        composed_loss.backward()
         optimizer.step()
 
         mean_loss = "%6.2f" % (report_loss) #/ (BATCH_SIZE * CLASSES))
