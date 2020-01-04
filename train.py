@@ -162,8 +162,9 @@ for epoch in range(EPOCHS):
             predictions = clf(X, X.shape[0])
             report_loss += model.TotalLogLoss(predictions, labels)
 
-        report_loss.backward()
-        optimizer.step()
+        if not report_loss.isnan():
+            report_loss.backward()
+            optimizer.step()
 
         mean_loss = "%6.6f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()

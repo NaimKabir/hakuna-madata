@@ -13,7 +13,7 @@ import functools
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # I have rare truncated data that I'm just... allowing. Don't judge me
 MAX_CACHE_SIZE = int(os.environ.get("MAX_CACHE_SIZE", 2048))
-RESIZE_TARGET = (224, 300)  # anything 3:4 ratio should keep original aspect (1536, 2048) and not distort too much
+RESIZE_TARGET = (384, 512)  # anything 3:4 ratio should keep original aspect (1536, 2048) and not distort too much
 MEANS_NORMALIZE = [0.485, 0.456, 0.406]
 STDS_NORMALIZE = std = [0.229, 0.224, 0.225]
 
