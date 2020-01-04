@@ -112,6 +112,7 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 import torchvision.models as models
 
 if CHECKPOINT.endswith('pt'):
+    logger.logger.info("Loading %s" % CHECKPOINT)
     clf = torch.load(CHECKPOINT)
 else:
     clf = model.ImageSequenceClassifier(512, 256, 1, CLASSES)
