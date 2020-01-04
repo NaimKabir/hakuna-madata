@@ -7,6 +7,7 @@ from torch import optim
 import pandas as pd
 import torch
 import datetime as dt
+import sys
 
 MODEL_DIR = "../models/"
 SEASON_1_6_PATH = "../train_metadata_1_6.csv"
@@ -17,6 +18,8 @@ MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 10000  # save model out every N batches
 BATCH_SIZE = 1
 CLASSES = 54
+
+CHECKPOINT = sys.argv[1]
 
 labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
 
@@ -108,7 +111,10 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 
 import torchvision.models as models
 
-clf = model.ImageSequenceClassifier(512, 256, 1, CLASSES)
+if CHECKPOINT.endswith('pt'):
+    clf = torch.load(CHECKPOINT)
+else:
+    clf = model.ImageSequenceClassifier(512, 256, 1, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 
