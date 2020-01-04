@@ -93,7 +93,7 @@ logger.logger.info("Balanced data set.")
 
 # I have a janky as hell solution to allow data loading from multiple disks
 # this isn't neat because Docker doesn't allow symlinking and my data is in many volumes
-possible_data_dirs = ["..", "../disks/s2/", "../disks/s3/", "../disks/s4/", "../disks/s5/", "../disks/s6/"]
+possible_data_dirs = ["..", "../disks/s5/"]
 
 trainset = loader.SerengetiSequenceDataset(
     metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs, training_mode=True
