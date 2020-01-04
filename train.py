@@ -169,7 +169,7 @@ for epoch in range(EPOCHS):
             predictions = clf(X, X.shape[0])
             report_loss += model.TotalLogLoss(predictions, labels)
 
-        if not report_loss.isnan():
+        if not torch.isnan(report_loss):
             report_loss.backward()
             optimizer.step()
 
