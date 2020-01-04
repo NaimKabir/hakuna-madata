@@ -15,7 +15,7 @@ VAL_DATAFRAME_PATH = "../train_metadata_1_6_val.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
-BATCH_SIZE = 32
+BATCH_SIZE = 1
 CLASSES = 54
 
 labels = pd.read_csv("../train_labels.csv").set_index("seq_id")

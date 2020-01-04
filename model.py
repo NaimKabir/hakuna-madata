@@ -65,9 +65,9 @@ class ImageEmbedder(nn.Module):
         super(ImageEmbedder, self).__init__()
 
         pretrained = models.resnet18(pretrained=True)
-        for param in pretrained.parameters():
-            # freeze pretrained weights
-            param.requires_grad = False
+        # for param in pretrained.parameters():
+        #     # freeze pretrained weights
+        #     param.requires_grad = False
         pretrained.fc = nn.Linear(512, 512, bias=True)  # fine-tuned final layer, w/ gradients on
 
         embedder_operations = OrderedDict(
