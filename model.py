@@ -100,7 +100,7 @@ class SequenceClassifier(nn.Module):
         self.linear1 = nn.Linear(self.hidden_dim, self.hidden_dim)
         self.relu1 = nn.ReLU6(inplace=True)
         self.linear2 = nn.Linear(self.hidden_dim, classes)
-        self.sigmoid = nn.Sigmoid()
+        self.sigmoid = nn.Softmax()
 
     def forward(self, X, seq_len):
 
