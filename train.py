@@ -56,7 +56,9 @@ if not os.path.exists(TRAIN_DATAFRAME_PATH):
     val_folders = splits["splits"]["val"]
 
     def build_df_index(df, folders):
-        df_index = df.file_name == "DOESNT EXIST ANYWHERE"  # start with an all False index (this is janky, whatever idc)
+        df_index = (
+            df.file_name == "DOESNT EXIST ANYWHERE"
+        )  # start with an all False index (this is janky, whatever idc)
         for folder in folders:
             df_index = df_index | df.file_name.str.contains(folder)
         return df_index
@@ -142,7 +144,7 @@ for epoch in range(EPOCHS):
 
     logger.logger.info("EPOCH: %d" % epoch)
 
-    #evaluate(clf, valset, 50)
+    # evaluate(clf, valset, 50)
 
     clf.train()  # ensure we're in training mode before we train
 
@@ -158,17 +160,16 @@ for epoch in range(EPOCHS):
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
-            probas = predictions / predictions.sum()
-            sparse_output_loss += -1*(probas * torch.log(probas)).sum() # entropy
             report_loss += model.TotalLogLoss(predictions, labels)
 
-        composed_loss = sparse_output_loss + report_loss
-        composed_loss.backward()
+        report_loss.backward()
         optimizer.step()
 
-        mean_loss = "%6.2f" % (report_loss/ (BATCH_SIZE * CLASSES))
+        mean_loss = "%6.2f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
-        logger.logger.info("Batch %d Mean total logloss: %s & Sparsity loss: %6.2f" % (N, mean_loss, sparse_output_loss))
+        logger.logger.info(
+            "Batch %d Mean total logloss: %s" % (N, mean_loss)
+        )
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
             torch.save(clf, f"{MODEL_DIR}/resnet_extralayer_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")

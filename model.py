@@ -7,6 +7,7 @@ import numpy as np
 
 CUDA_AVAILABLE = torch.cuda.is_available()
 
+
 def TotalLogLoss(predicted, labels):
     """
         Take the binary log loss for each predicted label and sum them.
@@ -29,6 +30,7 @@ def TotalLogLoss(predicted, labels):
 
     return negative_log.sum()
 
+
 def HingeLoss(predicted, labels):
 
     # multilabel margin loss is straight-up stupid in its implementation
@@ -38,7 +40,7 @@ def HingeLoss(predicted, labels):
         labels = labels.unsqueeze(0)
         predicted = predicted.unsqueeze(0)
 
-    idxes = torch.ones(labels.shape) * -1 # preallocate space for labels
+    idxes = torch.ones(labels.shape) * -1  # preallocate space for labels
     if CUDA_AVAILABLE:
         idxes = idxes.cuda()
 
@@ -46,9 +48,9 @@ def HingeLoss(predicted, labels):
     for row in range(labels.shape[0]):
         row_idx = nonzeros[:, 0] == row
         nonzero_idxes = nonzeros[row_idx, 1]
-        idxes[row, :len(nonzero_idxes)] = nonzero_idxes
-    loss_func = nn.MultiLabelMarginLoss(reduction='sum')
-    hinge_loss = loss_func(predicted, idxes.long()) 
+        idxes[row, : len(nonzero_idxes)] = nonzero_idxes
+    loss_func = nn.MultiLabelMarginLoss(reduction="sum")
+    hinge_loss = loss_func(predicted, idxes.long())
 
     return hinge_loss
 
@@ -69,7 +71,12 @@ class ImageEmbedder(nn.Module):
         pretrained.fc = nn.Linear(512, 512, bias=True)  # fine-tuned final layer, w/ gradients on
 
         embedder_operations = OrderedDict(
-            {"resnet": pretrained, "relu1": nn.ReLU(inplace=True), "fc2": nn.Linear(512, embedding_dim, bias=True)}
+            {
+                "resnet": pretrained,
+                "relu1": nn.ReLU(inplace=True),
+                "fc2": nn.Linear(512, embedding_dim, bias=True),
+                "tanh": nn.Tanh(),
+            }
         )
         self.network = nn.Sequential(embedder_operations)
 
@@ -139,4 +146,3 @@ class ImageSequenceClassifier(nn.Module):
 
     def forward(self, X):
         return self.network(X)
-        
