@@ -158,16 +158,16 @@ for epoch in range(EPOCHS):
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
-            loss += model.HingeLoss(predictions, labels)
+            sparse_output_loss += predictions.sum(predictions)
             report_loss += model.TotalLogLoss(predictions, labels)
 
-        composed_loss = loss + report_loss
+        composed_loss = sparse_output_loss + report_loss
         composed_loss.backward()
         optimizer.step()
 
         mean_loss = "%6.2f" % (report_loss/ (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
-        logger.logger.info("Batch %d Mean total logloss: %s & Hinge loss: %6.2f" % (N, mean_loss, loss))
+        logger.logger.info("Batch %d Mean total logloss: %s & Sparsity loss: %6.2f" % (N, mean_loss, sparse_output_loss))
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet_composed_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/resnet_extralayer_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")

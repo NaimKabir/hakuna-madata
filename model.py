@@ -89,9 +89,11 @@ class SequenceClassifier(nn.Module):
         selector_operations = OrderedDict(
             {
                 "linear1": nn.Linear(in_dim, in_dim, seq_len),
-                "relu": nn.ReLU(inplace=True),
-                "linear2": nn.Linear(in_dim, 1, seq_len),
-                "tanh": nn.Tanh(), # to downgrade influence of particular vectors
+                "relu1": nn.ReLU(inplace=True),
+                "linear2": nn.Linear(in_dim, in_dim, seq_len),
+                "relu2": nn.ReLU(inplace=True),
+                "linear3": nn.Linear(in_dim, 1, seq_len),
+                "sigmoid": nn.Sigmoid(),
             }
         )
         self.selector = nn.Sequential(selector_operations)
@@ -99,9 +101,11 @@ class SequenceClassifier(nn.Module):
         predictor_operations = OrderedDict(
             {
                 "linear1": nn.Linear(in_dim, in_dim),
-                "relu": nn.ReLU(inplace=True),
-                "linear2": nn.Linear(in_dim, classes),
-                "sigmoid": nn.Sigmoid(),   # unbounded for margin maximization
+                "relu1": nn.ReLU(inplace=True),
+                "linear2": nn.Linear(in_dim, in_dim),
+                "relu2": nn.ReLU(inplace=True),
+                "linear3": nn.Linear(in_dim, classes),
+                "sigmoid": nn.Sigmoid(),
             }
         )
         self.predictor = nn.Sequential(predictor_operations)
