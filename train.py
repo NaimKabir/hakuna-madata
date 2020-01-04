@@ -158,7 +158,7 @@ for epoch in range(EPOCHS):
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
-            sparse_output_loss += predictions.sum(predictions)
+            sparse_output_loss += predictions.sum()
             report_loss += model.TotalLogLoss(predictions, labels)
 
         composed_loss = sparse_output_loss + report_loss
