@@ -147,6 +147,8 @@ if CUDA_AVAILABLE:
 
 EPOCHS = 1000
 
+MAX_SEQ_LEN = 20
+
 for epoch in range(EPOCHS):
 
     logger.logger.info("EPOCH: %d" % epoch)
@@ -166,6 +168,7 @@ for epoch in range(EPOCHS):
         report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
+            X = X[:MAX_SEQ_LEN, :]
             predictions = clf(X, X.shape[0])
             report_loss += model.TotalLogLoss(predictions, labels)
 
