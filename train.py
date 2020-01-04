@@ -159,13 +159,13 @@ for epoch in range(EPOCHS):
         report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
-            predictions = clf(X)
+            predictions = clf(X, X.shape[0])
             report_loss += model.TotalLogLoss(predictions, labels)
 
         report_loss.backward()
         optimizer.step()
 
-        mean_loss = "%6.2f" % (report_loss / (BATCH_SIZE * CLASSES))
+        mean_loss = "%6.6f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
         logger.logger.info(
             "Batch %d Mean total logloss: %s" % (N, mean_loss)

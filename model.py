@@ -83,57 +83,35 @@ class ImageEmbedder(nn.Module):
     def forward(self, X):
         return self.network(X)
 
-
 class SequenceClassifier(nn.Module):
     """
         Given a sequence of image vectors, intelligently weight the importance of each member
         of the sequence and use it to predict presence/absence of a class.
     """
 
-    def __init__(self, seq_len, in_dim, classes):
+    def __init__(self, hidden_dim, in_dim, num_layers, classes):
         super(SequenceClassifier, self).__init__()
 
-        selector_operations = OrderedDict(
-            {
-                "linear1": nn.Linear(in_dim, in_dim, seq_len),
-                "relu1": nn.ReLU(inplace=True),
-                "linear2": nn.Linear(in_dim, in_dim, seq_len),
-                "relu2": nn.ReLU(inplace=True),
-                "linear3": nn.Linear(in_dim, 1, seq_len),
-                "sigmoid": nn.Sigmoid(),
-            }
-        )
-        self.selector = nn.Sequential(selector_operations)
+        self.hidden_dim = hidden_dim
 
-        predictor_operations = OrderedDict(
-            {
-                "linear1": nn.Linear(in_dim, in_dim),
-                "relu1": nn.ReLU(inplace=True),
-                "linear2": nn.Linear(in_dim, in_dim),
-                "relu2": nn.ReLU(inplace=True),
-                "linear3": nn.Linear(in_dim, classes),
-                "sigmoid": nn.Sigmoid(),
-            }
-        )
-        self.predictor = nn.Sequential(predictor_operations)
+        # The LSTM takes word embeddings as inputs, and outputs hidden states
+        # with dimensionality hidden_dim.
+        self.lstm = nn.LSTM(input_size=in_dim, hidden_size=self.hidden_dim, num_layers=num_layers)
+        self.linear1 = nn.Linear(self.hidden_dim, self.hidden_dim)
+        self.relu1 = nn.ReLU6(inplace=True)
+        self.linear2 = nn.Linear(self.hidden_dim, classes)
+        self.sigmoid = nn.Sigmoid()
 
-    def forward(self, X):
+    def forward(self, X, seq_len):
 
-        # get the weighted mean vector representation of the embedding sequence
+        hidden, _ = self.lstm(X.view(seq_len, 1, -1))
+        mapped = self.relu1(self.linear1(hidden.view(seq_len, -1)))
+        probabilities = self.sigmoid(self.linear2(mapped))
 
-        selector_vector = self.selector(X)
-        selected = X * selector_vector
-        selected = selected.mean(axis=0)
-
-        # use the weighted mean vector for final prediction step
-
-        decision = self.predictor(selected)
-
-        return decision
-
+        return probabilities
 
 class ImageSequenceClassifier(nn.Module):
-    def __init__(self, embedding_dim, seq_len, classes):
+    def __init__(self, embedding_dim, hidden_dim, num_layers, classes):
         super(ImageSequenceClassifier, self).__init__()
 
         network_operations = OrderedDict(

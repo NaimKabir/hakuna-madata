@@ -50,7 +50,6 @@ class SerengetiSequenceDataset(Dataset):
         labels_df: Optional[pd.DataFrame] = None,
         training_mode=False,
         input_resize=RESIZE_TARGET,
-        sequence_max: int = 50,
     ):
         """
         The data set interfaces with a set of files stored on disk in the same filenaming scheme that exists
@@ -75,7 +74,6 @@ class SerengetiSequenceDataset(Dataset):
 
         self.metadata = metadata_df
         self.data_dirs = data_dirs
-        self.sequence_max = sequence_max
         self.input_resize = input_resize
         self.training_mode = training_mode
 
@@ -101,7 +99,7 @@ class SerengetiSequenceDataset(Dataset):
             jitter = transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.1)
             transform_operations.append(jitter)
 
-            flip = transforms.RandomHorizontalFlip(p=0.5)
+            #flip = transforms.RandomHorizontalFlip(p=0.5)
             transform_operations.append(flip)
 
         tensorize = transforms.ToTensor()
@@ -166,15 +164,8 @@ class SerengetiSequenceDataset(Dataset):
 
         # we either truncate to the max expected sequence length or pad to it
 
-        imgs = imgs[: self.sequence_max]  # (3xWxH) tensors
         imgs = [img.unsqueeze(0) for img in imgs]  # # (1x3xWxH) tensors
         sequence = torch.cat(imgs, 0)
-
-        # pad if need be--pad vectors will come after real vectors
-
-        padding = self.sequence_max - len(imgs)
-        sequence = F.pad(input=sequence, pad=(0, 0, 0, 0, 0, 0, 0, padding), mode="constant", value=-1)
-
         return sequence
 
     @functools.lru_cache(MAX_CACHE_SIZE)
