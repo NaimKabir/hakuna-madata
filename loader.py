@@ -173,7 +173,7 @@ class SerengetiSequenceDataset(Dataset):
         # pad if need be--pad vectors will come after real vectors
 
         padding = self.sequence_max - len(imgs)
-        sequence = F.pad(input=sequence, pad=(0, 0, 0, 0, 0, 0, 0, padding), mode="constant", value=0)
+        sequence = F.pad(input=sequence, pad=(0, 0, 0, 0, 0, 0, 0, padding), mode="constant", value=-1)
 
         return sequence
 
