@@ -125,7 +125,7 @@ def evaluate(clf, valset, max_N):
 
             for ix in range(batch_samples.shape[0]):
                 X, labels = batch_samples[ix], batch_labels[ix]
-                predictions = clf(X)
+                predictions = clf(X.contiguous())
                 loss += model.TotalLogLoss(predictions, labels)
 
             if N == max_N:
