@@ -89,7 +89,7 @@ class SequenceClassifier(nn.Module):
         of the sequence and use it to predict presence/absence of a class.
     """
 
-    def __init__(self, hidden_dim, in_dim, num_layers, classes):
+    def __init__(self, in_dim, hidden_dim, num_layers, classes):
         super(SequenceClassifier, self).__init__()
 
         self.hidden_dim = hidden_dim
@@ -117,7 +117,7 @@ class ImageSequenceClassifier(nn.Module):
         network_operations = OrderedDict(
             {
                 "embedder": ImageEmbedder(embedding_dim),
-                "classifier": SequenceClassifier(seq_len, embedding_dim, classes),
+                "classifier": SequenceClassifier(embedding_dim, hidden_dim, num_layers, classes),
             }
         )
         self.network = nn.Sequential(network_operations)
