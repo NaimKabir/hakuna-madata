@@ -158,7 +158,8 @@ for epoch in range(EPOCHS):
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
-            sparse_output_loss += predictions.sum()
+            probas = predictions / predictions.sum()
+            sparse_output_loss += -1*probas * torch.log(probas) # entropy
             report_loss += model.TotalLogLoss(predictions, labels)
 
         composed_loss = sparse_output_loss + report_loss
