@@ -180,9 +180,9 @@ for epoch in range(EPOCHS):
             optimizer.step()
 
         mean_loss = report_loss / (BATCH_SIZE * CLASSES)
-        losses.append(mean_loss.cpu().numpy())
+        losses.append(mean_loss)
         losses = losses[-25:]
-        smoothed_loss = "%6.6f" % np.mean(losses)
+        smoothed_loss = "%6.6f" % torch.Tensor(losses).mean())
 
         smoothed_loss = smoothed_loss.strip()
         logger.logger.info("Batch %d Mean total logloss: %s" % (N, smoothed_loss))
