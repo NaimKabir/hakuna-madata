@@ -1,6 +1,7 @@
 import loader, model, logger
 from torch.utils.data import DataLoader
 import torch.nn as nn
+import numpy as np
 import json
 import os
 from torch import optim
