@@ -83,6 +83,7 @@ class ImageEmbedder(nn.Module):
     def forward(self, X):
         return self.network(X)
 
+
 class SequenceClassifier(nn.Module):
     """
         Given a sequence of image vectors, intelligently weight the importance of each member
@@ -109,6 +110,7 @@ class SequenceClassifier(nn.Module):
         probabilities = self.sigmoid(self.linear2(mapped))
 
         return probabilities
+
 
 class ImageSequenceClassifier(nn.Module):
     def __init__(self, embedding_dim, hidden_dim, num_layers, classes):

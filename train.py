@@ -111,7 +111,7 @@ valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, d
 
 import torchvision.models as models
 
-if CHECKPOINT.endswith('pt'):
+if CHECKPOINT.endswith("pt"):
     logger.logger.info("Loading %s" % CHECKPOINT)
     clf = torch.load(CHECKPOINT)
 else:
@@ -157,6 +157,8 @@ for epoch in range(EPOCHS):
 
     clf.train()  # ensure we're in training mode before we train
 
+    losses = []
+
     for N, (batch_samples, batch_labels) in enumerate(trainloader):
 
         if CUDA_AVAILABLE:
@@ -176,11 +178,15 @@ for epoch in range(EPOCHS):
             report_loss.backward()
             optimizer.step()
 
-        mean_loss = "%6.6f" % (report_loss / (BATCH_SIZE * CLASSES))
-        mean_loss = mean_loss.strip()
-        logger.logger.info(
-            "Batch %d Mean total logloss: %s" % (N, mean_loss)
-        )
+        mean_loss = report_loss / (BATCH_SIZE * CLASSES)
+        losses.append(mean_loss)
+        losses = losses[-25:]
+        smoothed_loss = "%6.6f" % np.mean(losses)
+
+        smoothed_loss = smoothed_loss.strip()
+        logger.logger.info("Batch %d Mean total logloss: %s" % (N, smoothed_loss))
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/mnasnet_unfrozen_lstm_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(
+                clf, f"{MODEL_DIR}/mnasnet_unfrozen_lstm_loss_{smoothed_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt"
+            )
