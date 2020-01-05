@@ -180,7 +180,7 @@ for epoch in range(EPOCHS):
             optimizer.step()
 
         mean_loss = report_loss / (BATCH_SIZE * CLASSES)
-        losses.append(mean_loss.numpy())
+        losses.append(mean_loss.cpu().numpy())
         losses = losses[-25:]
         smoothed_loss = "%6.6f" % np.mean(losses)
 
