@@ -99,17 +99,23 @@ logger.logger.info("Balanced data set.")
 possible_data_dirs = ["..", "../disks/s5/"]
 
 trainset = loader.SerengetiSequenceDataset(
-    metadata_df=balanced_train_df, labels_df=labels, data_dirs=possible_data_dirs, training_mode=True
+    metadata_df=balanced_train_df,
+    labels_df=labels,
+    data_dirs=possible_data_dirs,
+    training_mode=True,
+    sequence_max=MAX_SEQ_LEN,
 )
 trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
 
-valset = loader.SerengetiSequenceDataset(metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs)
+valset = loader.SerengetiSequenceDataset(
+    metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs, sequence_max=MAX_SEQ_LEN
+)
 
 # loading model
 
 import torchvision.models as models
 
-clf = model.ImageSequenceClassifier(512, 50, CLASSES)
+clf = model.ImageSequenceClassifier(512, MAX_SEQ_LEN, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 
@@ -160,7 +166,6 @@ for epoch in range(EPOCHS):
         report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
-            X = X[:MAX_SEQ_LEN, :]
             predictions = clf(X)
             report_loss += model.TotalLogLoss(predictions, labels)
 
@@ -169,9 +174,7 @@ for epoch in range(EPOCHS):
 
         mean_loss = "%6.2f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
-        logger.logger.info(
-            "Batch %d Mean total logloss: %s" % (N, mean_loss)
-        )
+        logger.logger.info("Batch %d Mean total logloss: %s" % (N, mean_loss))
 
         if N % CHECKPOINT_EVERY_N_BATCHES == 0:
-            torch.save(clf, f"{MODEL_DIR}/resnet_extralayer_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/mnasnet_unfrozen_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")

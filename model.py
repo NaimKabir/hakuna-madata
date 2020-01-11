@@ -64,17 +64,17 @@ class ImageEmbedder(nn.Module):
     def __init__(self, embedding_dim):
         super(ImageEmbedder, self).__init__()
 
-        pretrained = models.resnet18(pretrained=True)
+        pretrained = models.mnasnet1_0(pretrained=True)
         # for param in pretrained.parameters():
         #     # freeze pretrained weights
         #     param.requires_grad = False
-        pretrained.fc = nn.Linear(512, 512, bias=True)  # fine-tuned final layer, w/ gradients on
+        pretrained.classifier = nn.Linear(1280, 1024, bias=True)  # fine-tuned final layer, w/ gradients on
 
         embedder_operations = OrderedDict(
             {
                 "resnet": pretrained,
                 "relu1": nn.ReLU(inplace=True),
-                "fc2": nn.Linear(512, embedding_dim, bias=True),
+                "fc2": nn.Linear(1024, embedding_dim, bias=True),
                 "tanh": nn.Tanh(),
             }
         )
