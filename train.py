@@ -17,6 +17,7 @@ MAX_SAMPLES_PER_LABEL = 5000
 CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
 BATCH_SIZE = 32
 CLASSES = 54
+MAX_SEQ_LEN = 25
 
 labels = pd.read_csv("../train_labels.csv").set_index("seq_id")
 
@@ -159,6 +160,7 @@ for epoch in range(EPOCHS):
         report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
+            X = X[:MAX_SEQ_LEN, :]
             predictions = clf(X)
             report_loss += model.TotalLogLoss(predictions, labels)
 
