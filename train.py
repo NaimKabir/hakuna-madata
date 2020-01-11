@@ -115,7 +115,7 @@ valset = loader.SerengetiSequenceDataset(
 
 import torchvision.models as models
 
-clf = model.ImageSequenceClassifier(512, MAX_SEQ_LEN, CLASSES)
+clf = model.ImageSequenceClassifier(256, MAX_SEQ_LEN, CLASSES)
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 
