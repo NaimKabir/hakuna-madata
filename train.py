@@ -13,9 +13,9 @@ SEASON_1_6_PATH = "../train_metadata_1_6.csv"
 TRAIN_DATAFRAME_PATH = "../train_metadata_1_6_train.csv"
 VAL_DATAFRAME_PATH = "../train_metadata_1_6_val.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
-MAX_SAMPLES_PER_LABEL = 5000
+MAX_SAMPLES_PER_LABEL = 20000
 CHECKPOINT_EVERY_N_BATCHES = 50  # save model out every N batches
-BATCH_SIZE = 4
+BATCH_SIZE = 2
 CLASSES = 54
 MAX_SEQ_LEN = 25
 
