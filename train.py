@@ -7,6 +7,7 @@ from torch import optim
 import pandas as pd
 import torch
 import datetime as dt
+import sys
 
 MODEL_DIR = "../models/"
 SEASON_1_6_PATH = "../train_metadata_1_6.csv"
@@ -115,7 +116,14 @@ valset = loader.SerengetiSequenceDataset(
 
 import torchvision.models as models
 
-clf = model.ImageSequenceClassifier(256, MAX_SEQ_LEN, CLASSES)
+model_arg = sys.argv[1]
+if model_arg.endswith('.pt'):
+    logger.logger.info(f"Loading {model_arg}")
+    clf = torch.load(model_arg)
+else:
+    clf = model.ImageSequenceClassifier(256, MAX_SEQ_LEN, CLASSES)
+
+
 optimizer = optim.SGD(clf.parameters(), lr=1e-4, momentum=0.9)
 
 
