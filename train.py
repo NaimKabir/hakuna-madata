@@ -117,10 +117,11 @@ valset = loader.SerengetiSequenceDataset(
 import torchvision.models as models
 
 model_arg = sys.argv[1]
-if model_arg.endswith('.pt'):
+if model_arg.endswith(".pt"):
     logger.logger.info(f"Loading {model_arg}")
     clf = torch.load(model_arg)
 else:
+    logger.logger.info(f"Spinning up new model.")
     clf = model.ImageSequenceClassifier(256, MAX_SEQ_LEN, CLASSES)
 
 
