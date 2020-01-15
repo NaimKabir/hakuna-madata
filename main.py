@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 import logger
 from loader import SerengetiSequenceDataset, RESIZE_TARGET
-from .train import MAX_SEQ_LEN
+from train import MAX_SEQ_LEN
 
 CUDA_AVAILABLE = torch.cuda.is_available()
 ASSET_PATH = Path(__file__).parents[0] / "assets"
