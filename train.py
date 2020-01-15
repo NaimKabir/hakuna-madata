@@ -146,7 +146,7 @@ def evaluate(clf, valset, max_N):
 
             if N == max_N:
                 mean_loss = loss / float(max_N * BATCH_SIZE * CLASSES)
-                logger.logger.info("Eval Mean Loss: %6.2f" % mean_loss)
+                logger.logger.info("Eval Mean Loss: %6.6f" % mean_loss)
                 return
 
 

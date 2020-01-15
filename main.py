@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 import logger
 from loader import SerengetiSequenceDataset, RESIZE_TARGET
+from .train import MAX_SEQ_LEN
 
 CUDA_AVAILABLE = torch.cuda.is_available()
 ASSET_PATH = Path(__file__).parents[0] / "assets"
@@ -65,7 +66,7 @@ def perform_inference():
         data_dirs=[DATA_PATH],
         training_mode=False,
         input_resize=RESIZE_TARGET,
-        sequence_max=50,
+        sequence_max=MAX_SEQ_LEN,
     )
 
     # Perform (and time) inference
