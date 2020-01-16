@@ -92,13 +92,13 @@ class SerengetiSequenceDataset(Dataset):
 
         transform_operations = []
 
-        resize = transforms.Resize(self.input_resize)
+        resize = transforms.Resize(self.input_resize,  interpolation=Image.LANCZOS)
         transform_operations.append(resize)
 
         if self.training_mode:
             # training data augmentation
 
-            jitter = transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.1)
+            jitter = transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
             transform_operations.append(jitter)
 
             flip = transforms.RandomHorizontalFlip(p=0.5)
