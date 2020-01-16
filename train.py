@@ -185,5 +185,7 @@ for epoch in range(EPOCHS):
         mean_loss = mean_loss.strip()
         logger.logger.info("Batch %d Mean total logloss: %s" % (N, mean_loss))
 
-        if N % CHECKPOINT_EVERY_N_BATCHES == 0:
+        checkpointer = int(os.environ.get('EVERY_N_BATCHES', CHECKPOINT_EVERY_N_BATCHES))
+
+        if N % checkpointer == 0:
             torch.save(clf, f"{MODEL_DIR}/mnasnet_unfrozen_seq_{MAX_SEQ_LEN}_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
