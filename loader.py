@@ -12,7 +12,7 @@ from typing import Optional, List
 import functools
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # I have rare truncated data that I'm just... allowing. Don't judge me
-MAX_CACHE_SIZE = int(os.environ.get("MAX_CACHE_SIZE", 4096))
+MAX_CACHE_SIZE = int(os.environ.get("MAX_CACHE_SIZE", 2048))
 RESIZE_TARGET = (384, 512)  # anything 3:4 ratio should keep original aspect (1536, 2048) and not distort too much
 MEANS_NORMALIZE = [0.485, 0.456, 0.406]
 STDS_NORMALIZE = std = [0.229, 0.224, 0.225]
@@ -92,13 +92,13 @@ class SerengetiSequenceDataset(Dataset):
 
         transform_operations = []
 
-        resize = transforms.Resize(self.input_resize,  interpolation=Image.LANCZOS)
+        resize = transforms.Resize(self.input_resize)
         transform_operations.append(resize)
 
         if self.training_mode:
             # training data augmentation
 
-            jitter = transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
+            jitter = transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.1)
             transform_operations.append(jitter)
 
             flip = transforms.RandomHorizontalFlip(p=0.5)
