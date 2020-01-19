@@ -152,7 +152,7 @@ def evaluate(clf, valset, max_N):
 def binarize(tensor):
     with torch.no_grad():
         idx = torch.argmax(tensor)
-        return torch.eye(CLASSES)[idx]
+        return torch.eye(CLASSES)[idx].cuda()
 
 if CUDA_AVAILABLE:
     logger.logger.info("Using CUDA for model load.")
