@@ -184,8 +184,6 @@ for epoch in range(EPOCHS):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
             report_loss += model.TotalLogLoss(predictions, labels)
-            with torch.no_grad():
-                modified_loss += model.TotalLogLoss(binarize(predictions), labels)
 
 
         report_loss.backward()
@@ -194,8 +192,7 @@ for epoch in range(EPOCHS):
         mean_loss = "%6.6f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
 
-        modified_loss = modified_loss / (BATCH_SIZE * CLASSES)
-        logger.logger.info("Batch %d Mean total logloss: %s; modified loss: %6.6f" % (N, mean_loss, modified_loss))
+        logger.logger.info("Batch %d Mean total logloss: %s" % (N, mean_loss))
 
         checkpointer = int(os.environ.get('EVERY_N_BATCHES', CHECKPOINT_EVERY_N_BATCHES))
 
