@@ -23,7 +23,7 @@ def predict(clf, valset):
     valloader = DataLoader(valset, batch_size=32, shuffle=False)
 
     all_preds = []
-    for batch_samples in valloader:
+    for N, batch_samples in enumerate(valloader):
 
         batch_preds = []
 
@@ -38,6 +38,10 @@ def predict(clf, valset):
         batch_preds_tensor = torch.cat(batch_preds, 0)
 
         all_preds.append(batch_preds_tensor)
+
+        if N % 100 == 0:
+            logger.logger.info(f"Processed {N} samples.")
+
 
     return torch.cat(all_preds, 0)
 
