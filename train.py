@@ -149,6 +149,10 @@ def evaluate(clf, valset, max_N):
                 logger.logger.info("Eval Mean Loss: %6.6f" % mean_loss)
                 return
 
+def binarize(tensor):
+    with torch.no_grad():
+        idx = torch.argmax(tensor)
+        return torch.eye(CLASSES)[idx]
 
 if CUDA_AVAILABLE:
     logger.logger.info("Using CUDA for model load.")
@@ -171,19 +175,24 @@ for epoch in range(EPOCHS):
 
         optimizer.zero_grad()
 
-        sparse_output_loss = 0
+        modified_loss = 0
         report_loss = 0
         for ix in range(batch_samples.shape[0]):
             X, labels = batch_samples[ix], batch_labels[ix]
             predictions = clf(X)
             report_loss += model.TotalLogLoss(predictions, labels)
+            with torch.no_grad():
+                modified_loss += model.TotalLogLoss(binarize(predictions), labels)
+
 
         report_loss.backward()
         optimizer.step()
 
         mean_loss = "%6.6f" % (report_loss / (BATCH_SIZE * CLASSES))
         mean_loss = mean_loss.strip()
-        logger.logger.info("Batch %d Mean total logloss: %s" % (N, mean_loss))
+
+        modified_loss = modified_loss / (BATCH_SIZE * CLASSES)
+        logger.logger.info("Batch %d Mean total logloss: %s; modified loss: %6.6f" % (N, mean_loss, modified_loss))
 
         checkpointer = int(os.environ.get('EVERY_N_BATCHES', CHECKPOINT_EVERY_N_BATCHES))
 
