@@ -201,7 +201,7 @@ for epoch in range(EPOCHS):
         
         try:
             checkpointer = int(checkpointer)
-        else:
+        except:
             checkpointer = CHECKPOINT_EVERY_N_BATCHES
 
         if N % checkpointer == 0:
