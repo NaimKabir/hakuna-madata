@@ -16,7 +16,7 @@ VAL_DATAFRAME_PATH = "../train_metadata_1_6_val.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 10000
 CHECKPOINT_EVERY_N_BATCHES = 5000  # save model out every N batches
-BATCH_SIZE = 32
+BATCH_SIZE = 256
 CLASSES = 54
 MAX_SEQ_LEN = 10
 
@@ -168,7 +168,7 @@ for epoch in range(EPOCHS):
 
     logger.logger.info("EPOCH: %d" % epoch)
 
-    evaluate(clf, valset, 50)
+    #evaluate(clf, valset, 50)
 
     clf.train()  # ensure we're in training mode before we train
 
