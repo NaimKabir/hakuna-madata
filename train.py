@@ -16,7 +16,7 @@ VAL_DATAFRAME_PATH = "../train_metadata_1_6_val.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 10000
 CHECKPOINT_EVERY_N_BATCHES = 5000  # save model out every N batches
-BATCH_SIZE = 8
+BATCH_SIZE = 32
 CLASSES = 54
 MAX_SEQ_LEN = 10
 
@@ -106,6 +106,7 @@ trainset = loader.SerengetiSequenceDataset(
     training_mode=True,
     sequence_max=MAX_SEQ_LEN,
 )
+logger.logger.info(f"Trainset of len: {len(trainset)}")
 trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
 
 valset = loader.SerengetiSequenceDataset(
@@ -197,4 +198,4 @@ for epoch in range(EPOCHS):
         checkpointer = int(os.environ.get('EVERY_N_BATCHES', CHECKPOINT_EVERY_N_BATCHES))
 
         if N % checkpointer == 0:
-            torch.save(clf, f"{MODEL_DIR}/mnasnet_unfrozen_seq_{MAX_SEQ_LEN}_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
+            torch.save(clf, f"{MODEL_DIR}/mnasnet_frozen_seq_{MAX_SEQ_LEN}_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
