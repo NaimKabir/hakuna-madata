@@ -14,7 +14,7 @@ SEASON_1_6_PATH = "../train_metadata_1_6.csv"
 TRAIN_DATAFRAME_PATH = "../train_metadata_1_6_train.csv"
 VAL_DATAFRAME_PATH = "../train_metadata_1_6_val.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
-MAX_SAMPLES_PER_LABEL = 10000
+MAX_SAMPLES_PER_LABEL = 20000
 CHECKPOINT_EVERY_N_BATCHES = 5000  # save model out every N batches
 BATCH_SIZE = 256
 CLASSES = 54
@@ -107,7 +107,7 @@ trainset = loader.SerengetiSequenceDataset(
     sequence_max=MAX_SEQ_LEN,
 )
 logger.logger.info(f"Trainset of len: {len(trainset)}")
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
 
 valset = loader.SerengetiSequenceDataset(
     metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs, sequence_max=MAX_SEQ_LEN
