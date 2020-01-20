@@ -108,7 +108,7 @@ trainset = loader.SerengetiSequenceDataset(
     sequence_max=MAX_SEQ_LEN,
 )
 logger.logger.info(f"Trainset of len: {len(trainset)}")
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=3)
 
 valset = loader.SerengetiSequenceDataset(
     metadata_df=val_df, labels_df=labels, data_dirs=possible_data_dirs, sequence_max=MAX_SEQ_LEN

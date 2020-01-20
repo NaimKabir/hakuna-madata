@@ -141,7 +141,7 @@ class SerengetiSequenceDataset(Dataset):
 
         assert isinstance(img_files, Iterable), "Something went wrong with loading img_files, should be iterable."
 
-        imgs = (self.load_img(file_name) for file_name in img_files)
+        imgs = (self.load_img(file_name) for file_name in img_files[:self.sequence_max])
 
         # processing images
 
