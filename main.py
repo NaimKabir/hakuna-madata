@@ -19,7 +19,7 @@ def predict(clf, valset):
     """ Evaluate on a subset of the test data. 
         Binarize: anything below 5% is dropped to 0 and everything else is jumped to 1. """
 
-    clf  # go into eval mode so we don't accrue grads
+    clf.eval()  # go into eval mode so we don't accrue grads
     valloader = DataLoader(valset, batch_size=32, shuffle=False)
 
     all_preds = []

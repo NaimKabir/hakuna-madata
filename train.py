@@ -132,7 +132,7 @@ def evaluate(clf, valset, max_N):
     """ Evaluate on a subset of the test data """
     with torch.no_grad():
         clf.eval()  # go into eval mode so we don't accrue grads
-        valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
+        valloader = DataLoader(valset, batch_size=BATCH_SIZE, shuffle=True)
         loss = 0
         for N, (batch_samples, batch_labels) in enumerate(valloader):
 
@@ -167,7 +167,7 @@ for epoch in range(EPOCHS):
 
     logger.logger.info("EPOCH: %d" % epoch)
 
-    # evaluate(clf, valset, 50)
+    evaluate(clf, valset, 50)
 
     clf.train()  # ensure we're in training mode before we train
 
