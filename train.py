@@ -15,7 +15,8 @@ TRAIN_DATAFRAME_PATH = "../train_metadata_1_6_train.csv"
 VAL_DATAFRAME_PATH = "../train_metadata_1_6_val.csv"
 CUDA_AVAILABLE = torch.cuda.is_available()
 MAX_SAMPLES_PER_LABEL = 20000
-CHECKPOINT_EVERY_N_BATCHES = 5000  # save model out every N batches
+CHECKPOINT_EVERY_N_BATCHES = 1000  # save model out every N batches
+CHECKPOINT_FILE = "checkpoint_every_n.txt"
 BATCH_SIZE = 256
 CLASSES = 54
 MAX_SEQ_LEN = 10
@@ -195,7 +196,13 @@ for epoch in range(EPOCHS):
 
         logger.logger.info("Batch %d Mean total logloss: %s" % (N, mean_loss))
 
-        checkpointer = int(os.environ.get('EVERY_N_BATCHES', CHECKPOINT_EVERY_N_BATCHES))
+        with open(CHECKPOINT_FILE, 'r') as handle:
+            checkpointer = handle.read()
+        
+        try:
+            checkpointer = int(checkpointer)
+        else:
+            checkpointer = CHECKPOINT_EVERY_N_BATCHES
 
         if N % checkpointer == 0:
             torch.save(clf, f"{MODEL_DIR}/mnasnet_frozen_seq_{MAX_SEQ_LEN}_loss_{mean_loss}_iter_{str(N)}_{str(dt.datetime.now())}.pt")
