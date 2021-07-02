@@ -1,6 +1,6 @@
 # hakuna-madata
 
-Data loading and training code for the ai4serengeti DrivenData challenge, where we detected animal species from field camera image sequences. 
+Training and inference code for the ai4serengeti DrivenData challenge, where we detected animal species from field camera image sequences. 
 
 Designed to play well in [this runtime environment.](https://github.com/NaimKabir/ai4earth-serengeti-runtime)
 
